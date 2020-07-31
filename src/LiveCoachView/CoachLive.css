@@ -1,0 +1,126 @@
+
+
+
+
+
+
+/** HEADER STYLES **/
+#studentHeader {
+  width: 6vh;
+  height: 6vh;
+}
+
+#headerDiv {
+  height: 5vh;
+  text-align: center;
+}
+
+#studentTag {
+  color: #797979;
+  font-size: 1.5vw;
+  margin-right: 10px;
+}
+
+#studentUsername {
+  color: #797979;
+  font-size: 1.5vw;
+  margin-left: 10px;
+}
+
+/** STATSCREEN STYLES **/
+
+#statsSide {
+  height: 95vh;
+  padding: 0;
+}
+
+#statRow {
+  height: 84vh;
+  border: 2px solid black;
+  background-color: #D8D8D8;
+}
+
+#statsContainer {
+  width: 95%;
+  margin-right: 0px;
+}
+
+.tabButton {
+  width: 100%;
+  background-color: #D8D8D8;
+  font-size: 1.2vw;
+}
+
+.activeTab {
+  width: 100%;
+  background-color: #FFFFFF;
+  font-size: 1.2vw;
+}
+
+
+
+#webCol {
+  padding: 0px;
+}
+
+
+
+
+
+
+#tabCol {
+  padding: 0px;
+}
+
+#endSessionBtn {
+  margin-right: auto;
+  margin-left: auto;
+  width: 15vw;
+  font-size: 2vh;
+  margin-top: 15px;
+  border-radius: 5px;
+  background-color: #CFCFCF;
+  color: #646464;
+  height: 5vh;
+}
+
+#mainStatDiv {
+  background-color: green;
+  margin: auto;
+}
+
+/** MAP STYLES **/
+
+
+
+#mapSide {
+  padding: 0px;
+  height: 95vh;
+
+}
+#noteButton {
+  width: 10vw;
+  margin: 0px;
+  margin-left: 80%;
+  font-size: 1.2vw;
+
+}
+#mapContainer {
+  width: 95%;
+  margin-left: 0px;
+}
+
+#noteRow {
+  text-align: right;
+}
+
+#mapRow {
+  height: 91vh;
+  background-color: #D8D8D8;
+  border: 2px solid black;
+}
+
+#mapBodyDiv {
+  margin:auto;
+  background-color: red;
+}
