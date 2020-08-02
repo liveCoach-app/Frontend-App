@@ -5,6 +5,15 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
+
+
 export default function ProfileSideBar(props) {
   const clickHandler = props.clicker;
 
@@ -75,8 +84,14 @@ function HistoryBar(props) {
 
 
 function BackButton() {
+  const history = useHistory();
+
+  const handleClick = (evt) => {
+    history.push('/');
+  }
+
   return (
-    <button id="backButton">
+    <button id="backButton" onClick={handleClick}>
       <img src="backButton.png" id="backButtonImg" />
     </button>
   );

@@ -7,14 +7,23 @@ import Col from 'react-bootstrap/Col';
 import './StartSession.css';
 
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
+
+
 export default function StartSessionBar() {
 
   const [disc, setDisc] = React.useState('');
 
+  const history = useHistory();
+
   const handleSubmit = (evt) => {
-    evt.preventDefault();
-    console.log(disc);
-    alert(`Submitting epic: ${disc}`);
+    history.push('/CoachLive');
   }
 
   return(

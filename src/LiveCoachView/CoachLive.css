@@ -46,14 +46,18 @@
 }
 
 .tabButton {
+  height: 3.8vh;
   width: 100%;
-  background-color: #D8D8D8;
+
+  background-color: #FFFFFF;
   font-size: 1.2vw;
 }
 
 .activeTab {
+  height: 3.8vh;
   width: 100%;
-  background-color: #FFFFFF;
+  background-color: #D8D8D8;
+
   font-size: 1.2vw;
 }
 
@@ -91,18 +95,49 @@
 
 /** MAP STYLES **/
 
+    /** Note Tab Styles **/
 
+.noteButton {
+  margin: 0px;
+  margin-left: 75%;
+  font-size: 2vh;
+  width: 30vw;
+  height: 3.8vh;
+  background-color: white;
+}
 
+.activeNoteButton {
+  background-color: #D8D8D8;
+}
+
+#noteBox {
+  position: absolute;
+  background-color: #D8D8D8;
+  border: 2px solid black;
+  width: 30vw;
+  left: 36%;
+  height: 42vh;
+  padding: 0px;
+  text-align: center;
+}
+
+#noteContent {
+  width: 90%;
+  height: 70%;
+  background-color: #E1E1E1;
+  resize: none;
+}
+
+#noteTime {
+  font-size: 1.5vw;
+  margin-top: 7px;
+  margin-left: 5%;
+}
+
+    /** Map Styles **/
 #mapSide {
   padding: 0px;
   height: 95vh;
-
-}
-#noteButton {
-  width: 10vw;
-  margin: 0px;
-  margin-left: 80%;
-  font-size: 1.2vw;
 
 }
 #mapContainer {

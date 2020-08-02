@@ -5,37 +5,24 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './CoachLive.css';
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
+
+
 
 export default function Stats() {
   const [tab, setTab] = React.useState('statistic');
-
-
-  function setColor() {
-    console.log(tab)
-    var statBtn =  document.getElementById('webButton');
-    var tabBtn = document.getElementById('tabButton');
-    if (tab === false) {
-        statBtn.style.backgroundColor = "#D8D8D8"
-        tabBtn.style.backgroundColor = "#FFFFFF"
-    }
-    else if(tab === true){
-        statBtn.style.backgroundColor = "#FFFFFF"
-        tabBtn.style.backgroundColor = "#D8D8D8"
-    }
-  }
 
 
 
   const handleClick = (evt) => {
     const target = evt.currentTarget;
     setTab(target.id);
-    // if(target.id === "webButton" && tab === true) {
-    //   setTab(false);
-    // }
-    // else if(target.id === "tabButton" && tab === false) {
-    //   setTab(true);
-    // }
-    //setColor();
   }
 
   return (
@@ -64,7 +51,7 @@ function MainStats(props) {
     if(tabscreen === 'statistic') {
       return (<div className="statisticBody">STAT SCREEN</div>);
     }
-    else if(tabscreen === 'live') {
+    else if(tabscreen === 'liveData') {
       return (<div>TABSCREEN</div>);
     }
     else {
@@ -78,8 +65,14 @@ function MainStats(props) {
 
 
 function EndSession() {
+  const history = useHistory();
+
+  const handleClick = (evt) => {
+    history.push('/studentStart');
+  }
+
   return(
-    <button id="endSessionBtn">
+    <button id="endSessionBtn" onClick={handleClick}>
       End Session
     </button>
   );

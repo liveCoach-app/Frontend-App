@@ -19,13 +19,7 @@ import {
 } from "react-router-dom";
 
 
-
-
-export default function App() {
-  return (
-    <Router>
-      <div>
-        <nav>
+/*         <nav>
           <ul>
             <li>
               <Link to="/">Home</Link>
@@ -37,8 +31,13 @@ export default function App() {
               <Link to="/coachLive">Live Coach View</Link>
             </li>
           </ul>
-        </nav>
+        </nav> */
 
+
+export default function App() {
+  return (
+    <Router>
+      <div>
         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
         <Switch>
@@ -58,5 +57,13 @@ export default function App() {
 }
 
 function Home() {
-  return <h2>Home</h2>;
+  return (
+    <div>
+      <ul>
+        <h2>Home</h2>
+        <li><Link to="/studentStart">Student Start Screen</Link></li>
+        <li><Link to="/coachLive">Live Coach View</Link></li>
+      </ul>
+    </div>
+  );
 }
