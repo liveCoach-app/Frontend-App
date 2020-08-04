@@ -17,11 +17,7 @@ export default function Map() {
     <Container fluid id="mapContainer">
       <NoteView />
       <Row id="mapRow">
-        <Stage width={window.innerWidth / 2.2} height={window.innerHeight / 1.2}>
-          <Layer>
-            <Drawing />
-          </Layer>
-        </Stage>
+        <Drawing />
       </Row>
     </Container>
   );
@@ -30,97 +26,171 @@ export default function Map() {
 
 // CODE SNIPPET FOUND ONLINE, DON'T FULLY UNDERSTAND YET
 
+
+
+// const MapImage = () => {
+//   const [image] = useImage('./MapImg.png');
+//   return <Image image={image} />;
+// };
+
 class Drawing extends Component {
-
   state = {
-    isDrawing: false,
-    mode: "brush"
-  }
-
-
-  componentDidMount() {
-    const canvas = document.createElement("canvas");
-    canvas.width = 300;
-    canvas.height = 300;
-    const context = canvas.getContext("2d");
-
-    this.setState({ canvas, context });
-  }
+    lines: [],
+    currentTool: 'brush',
+    eraser: false,
+    brush: true,
+  };
 
   handleMouseDown = () => {
-    console.log("mousedown");
-    this.setState({ isDrawing: true });
+      this._drawing = true;
+
+      if(this.state.brush === true){
+        // add line
+        this.setState({
+          lines: [...this.state.lines, []]
+        });
+      }
+      else if(this.state.eraser === true) {
+
+        const stage = this.stageRef.getStage();
+        const point = stage.getPointerPosition();
 
 
-    const stage = this.image.parent.parent;
-    this.lastPointerPosition = stage.getPointerPosition();
+        const xRange = [point.x - 15, point.x + 15]
+        console.log('xrange ' + xRange)
+
+        const yRange = [point.y - 15, point.y + 15]
+        console.log('yrange ' + yRange)
+
+
+
+
+        console.log('ERASING pointX: ' + point.x +' point y ' + point.y)
+
+        const tempLines = this.state.lines;
+
+        for(let i = 0; i < tempLines.length; i++) {
+          const currentLine = tempLines[i];
+
+          for(let z = 0; z < currentLine.length - 1; z = z+2) {
+            console.log('z is ' + z)
+
+            if(currentLine[z] > xRange[0] && currentLine[z] < xRange[1]) {
+              console.log('FOUND X     FOUND X')
+              if(currentLine[z + 1] > yRange[0] && currentLine[z + 1] < yRange[1]) {
+
+                console.log('FOUND Y        FOUND Y');
+                tempLines.splice(i, 1);
+
+                this.setState ({
+                  lines: tempLines
+                });
+              }
+            }
+          }
+        }
+      }
+  };
+
+  handleMouseMove = e => {
+    //  no drawing - skipping
+    //  alert('drawing ' + !this._drawing + ' erasing ' + this.state.erasing)
+
+    if (!this._drawing) {
+      return;
+    }
+
+    if(this.state.brush === true) {
+      const stage = this.stageRef.getStage();
+      const point = stage.getPointerPosition();
+      const { lines } = this.state;
+
+      let lastLine = lines[lines.length - 1];
+      // add point
+      lastLine = lastLine.concat([point.x, point.y]);
+
+      // replace last
+      lines.splice(lines.length - 1, 1, lastLine);
+      this.setState({
+        lines: lines.concat()
+      });
+    }
+
   };
 
   handleMouseUp = () => {
-    console.log("mouseup");
-    this.setState({ isDrawing: false });
+    this._drawing = false;
   };
 
-  handleMouseMove = () => {
-  // console.log('mousemove');
-  const { context, isDrawing, mode } = this.state;
-
-  if (isDrawing) {
-    console.log("drawing");
-
-    // TODO: Don't always get a new context
-    context.strokeStyle = "#df4b26";
-    context.lineJoin = "round";
-    context.lineWidth = 5;
-
-    if (mode === "brush") {
-      context.globalCompositeOperation = "source-over";
-    } else if (mode === "eraser") {
-      context.globalCompositeOperation = "destination-out";
-    }
-    context.beginPath();
-
-    var localPos = {
-        x: this.lastPointerPosition.x - this.image.x(),
-        y: this.lastPointerPosition.y - this.image.y()
-      };
-      console.log("moveTo", localPos);
-      context.moveTo(localPos.x, localPos.y);
-
-      // TODO: improve
-      const stage = this.image.parent.parent;
-
-      var pos = stage.getPointerPosition();
-      localPos = {
-        x: pos.x - this.image.x(),
-        y: pos.y - this.image.y()
-      };
-      console.log("lineTo", localPos);
-      context.lineTo(localPos.x, localPos.y);
-      context.closePath();
-      context.stroke();
-      this.lastPointerPosition = pos;
-      this.image.getLayer().draw();
-    }
-  };
-
-
+  eraserClick = (evt) => {
+    alert('eraser on');
+    this.setState ({
+      eraser: true,
+      currentTool: 'eraser',
+      brush: false,
+    })
+  }
+  brushClick = (evt) => {
+    alert('brush on');
+    this.setState ({
+      eraser: false,
+      currentTool: 'brush',
+      brush: true,
+    })
+  }
 
   render() {
-    const { canvas } = this.state;
-    console.log("canvas", canvas);
+    const stageWidth = 600;
+    const stageHeight = 600;
 
     return (
-      <Image
-        image={canvas}
-        ref={node => (this.image = node)}
-        width={300}
-        height={300}
-        stroke="blue"
-        onMouseDown={this.handleMouseDown}
-        onMouseUp={this.handleMouseUp}
-        onMouseMove={this.handleMouseMove}
-      />
+      <div>
+        <Container>
+          <Row>
+            <button
+              onClick={this.brushClick}
+              id="eraserButton"
+              className={this.state.currentTool === 'brush' ? 'activeTool' : ''}
+            >
+              Brush
+            </button>
+          </Row>
+          <Row>
+            <button
+              onClick={this.eraserClick}
+              id="brushButton"
+              className={this.state.currentTool === 'eraser' ? 'activeTool' : ''}
+            >
+              Eraser
+            </button>
+          </Row>
+        </Container>
+
+
+        <Stage
+          container={'#mapRow'}
+          width={stageWidth}
+          height={stageHeight}
+          onContentMousedown={this.handleMouseDown}
+          onContentMousemove={this.handleMouseMove}
+          onContentMouseup={this.handleMouseUp}
+          ref={node => {
+            this.stageRef = node;
+          }}
+        >
+          <Layer>
+            <Rect
+            width={stageWidth}
+            height={stageHeight}
+            fill={'white'}
+            />
+
+            {this.state.lines.map((line, i) => (
+              <Line key={i} points={line} stroke="red" />
+            ))}
+          </Layer>
+        </Stage>
+      </div>
     );
   }
 }

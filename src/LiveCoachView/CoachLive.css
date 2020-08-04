@@ -119,6 +119,7 @@
   height: 42vh;
   padding: 0px;
   text-align: center;
+  z-index: 1;
 }
 
 #noteContent {
@@ -147,15 +148,30 @@
 
 #noteRow {
   text-align: right;
+
 }
 
 #mapRow {
   height: 91vh;
   background-color: #D8D8D8;
   border: 2px solid black;
+  text-align: center;
+  justify-content: flex-end;
+  padding-top: 50px;
+  padding-right: 25px;
 }
 
 #mapBodyDiv {
   margin:auto;
   background-color: red;
+}
+
+
+#eraserButton, #brushButton {
+  width: 4vw;
+  height: 2vw;
+}
+
+.activeTool {
+  background-color: #D8D8D8;
 }
