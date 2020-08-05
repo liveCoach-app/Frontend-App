@@ -24,8 +24,6 @@ export default function Map() {
 }
 
 
-// CODE SNIPPET FOUND ONLINE, DON'T FULLY UNDERSTAND YET
-
 
 
 // const MapImage = () => {
