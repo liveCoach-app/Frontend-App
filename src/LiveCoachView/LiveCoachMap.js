@@ -9,6 +9,7 @@ import './CoachLive.css';
 import { Stage, Layer, Rect, Text, Circle, Line, Image, Group } from 'react-konva';
 import Konva from 'konva';
 import NoteView from './NoteView.js'
+import MapImg from './MapImg.png'
 
 
 export default function Map() {
@@ -25,12 +26,6 @@ export default function Map() {
 
 
 
-
-// const MapImage = () => {
-//   const [image] = useImage('./MapImg.png');
-//   return <Image image={image} />;
-// };
-
 class Drawing extends Component {
   state = {
     lines: [],
@@ -38,6 +33,8 @@ class Drawing extends Component {
     eraser: false,
     brush: true,
   };
+
+
 
   handleMouseDown = () => {
       this._drawing = true;
@@ -49,16 +46,13 @@ class Drawing extends Component {
         });
       }
       else if(this.state.eraser === true) {
-
         const stage = this.stageRef.getStage();
         const point = stage.getPointerPosition();
 
 
         const xRange = [point.x - 15, point.x + 15]
-        console.log('xrange ' + xRange)
 
         const yRange = [point.y - 15, point.y + 15]
-        console.log('yrange ' + yRange)
 
 
 
@@ -71,18 +65,15 @@ class Drawing extends Component {
           const currentLine = tempLines[i];
 
           for(let z = 0; z < currentLine.length - 1; z = z+2) {
-            console.log('z is ' + z)
 
             if(currentLine[z] > xRange[0] && currentLine[z] < xRange[1]) {
-              console.log('FOUND X     FOUND X')
               if(currentLine[z + 1] > yRange[0] && currentLine[z + 1] < yRange[1]) {
-
-                console.log('FOUND Y        FOUND Y');
                 tempLines.splice(i, 1);
 
                 this.setState ({
                   lines: tempLines
                 });
+                return;
               }
             }
           }
@@ -97,6 +88,7 @@ class Drawing extends Component {
     if (!this._drawing) {
       return;
     }
+
 
     if(this.state.brush === true) {
       const stage = this.stageRef.getStage();
@@ -178,14 +170,15 @@ class Drawing extends Component {
         >
           <Layer>
             <Rect
-            width={stageWidth}
-            height={stageHeight}
+            width={stageWidth / 2}
+            height={stageHeight / 2}
+            image={MapImg}
             fill={'white'}
             />
-
             {this.state.lines.map((line, i) => (
               <Line key={i} points={line} stroke="red" />
             ))}
+
           </Layer>
         </Stage>
       </div>
