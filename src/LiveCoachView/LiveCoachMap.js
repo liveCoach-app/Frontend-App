@@ -9,11 +9,10 @@ import './CoachLive.css';
 import { Stage, Layer, Rect, Text, Circle, Line, Image, Group } from 'react-konva';
 import Konva from 'konva';
 import NoteView from './NoteView.js'
-import MapImg from './MapImg.png'
+import useImage from 'use-image';
 
 
 export default function Map() {
-
   return (
     <Container fluid id="mapContainer">
       <NoteView />
@@ -25,70 +24,94 @@ export default function Map() {
 }
 
 
+const MapImg = () => {
+  const [image] = useImage('http://ddragon.leagueoflegends.com/cdn/6.8.1/img/map/map11.png');
+  return <Image image={image} width={600} height={600}/>;
+};
+
+
 
 class Drawing extends Component {
+
   state = {
     lines: [],
+    circlePoints: [],
     currentTool: 'brush',
     eraser: false,
     brush: true,
+    circle: false,
   };
+
+
+  makeCircle = () => {
+    const stage = this.stageRef.getStage();
+    const point = stage.getPointerPosition();
+    const tempCircles = this.state.circlePoints;
+    tempCircles[tempCircles.length - 1][1] = [point.x, point.y];
+    this.setState({
+      circlePoints: tempCircles
+    })
+  }
 
 
 
   handleMouseDown = () => {
-      this._drawing = true;
 
-      if(this.state.brush === true){
-        // add line
-        this.setState({
-          lines: [...this.state.lines, []]
-        });
-      }
-      else if(this.state.eraser === true) {
-        const stage = this.stageRef.getStage();
-        const point = stage.getPointerPosition();
+    this._drawing = true;
 
+    if(this.state.brush === true){
 
-        const xRange = [point.x - 15, point.x + 15]
+      // add line
+      this.setState({
+        lines: [...this.state.lines, []]
+      });
+    }
+    else if(this.state.eraser === true) {
+      const stage = this.stageRef.getStage();
+      const point = stage.getPointerPosition();
+      const xRange = [point.x - 15, point.x + 15]
+      const yRange = [point.y - 15, point.y + 15]
 
-        const yRange = [point.y - 15, point.y + 15]
+      console.log('ERASING pointX: ' + point.x +' point y ' + point.y)
 
+      const tempLines = this.state.lines;
 
+      for(let i = 0; i < tempLines.length; i++) {
+        const currentLine = tempLines[i];
 
+        for(let z = 0; z < currentLine.length - 1; z = z+2) {
 
-        console.log('ERASING pointX: ' + point.x +' point y ' + point.y)
+          if(currentLine[z] > xRange[0] && currentLine[z] < xRange[1]) {
+            if(currentLine[z + 1] > yRange[0] && currentLine[z + 1] < yRange[1]) {
+              tempLines.splice(i, 1);
 
-        const tempLines = this.state.lines;
-
-        for(let i = 0; i < tempLines.length; i++) {
-          const currentLine = tempLines[i];
-
-          for(let z = 0; z < currentLine.length - 1; z = z+2) {
-
-            if(currentLine[z] > xRange[0] && currentLine[z] < xRange[1]) {
-              if(currentLine[z + 1] > yRange[0] && currentLine[z + 1] < yRange[1]) {
-                tempLines.splice(i, 1);
-
-                this.setState ({
-                  lines: tempLines
-                });
-                return;
-              }
+              this.setState ({
+                lines: tempLines
+              });
+              return;
             }
           }
         }
       }
+    }
+    else if (this.state.circle === true) {
+      const stage = this.stageRef.getStage();
+      const point = stage.getPointerPosition();
+      const tempCircles = this.state.circlePoints;
+      this.setState({
+        circlePoints: [...this.state.circlePoints, [[point.x, point.y], [point.x, point.y]]]
+      });
+    }
   };
 
   handleMouseMove = e => {
-    //  no drawing - skipping
-    //  alert('drawing ' + !this._drawing + ' erasing ' + this.state.erasing)
+    // const stage = this.stageRef.getStage();
+    // const point = stage.getPointerPosition();
+    // console.log('x is ' + point.x + 'y is ' + point.y)
 
     if (!this._drawing) {
       return;
     }
-
 
     if(this.state.brush === true) {
       const stage = this.stageRef.getStage();
@@ -105,12 +128,19 @@ class Drawing extends Component {
         lines: lines.concat()
       });
     }
-
+    else if (this.state.circle === true) {
+      this.makeCircle()
+    }
   };
 
   handleMouseUp = () => {
     this._drawing = false;
+
+    if(this.state.circle === true) {
+      this.makeCircle()
+    }
   };
+
 
   eraserClick = (evt) => {
     alert('eraser on');
@@ -118,15 +148,62 @@ class Drawing extends Component {
       eraser: true,
       currentTool: 'eraser',
       brush: false,
+      circle: false,
     })
   }
+
   brushClick = (evt) => {
     alert('brush on');
     this.setState ({
       eraser: false,
       currentTool: 'brush',
       brush: true,
+      circle: false,
     })
+  }
+
+  clearClick = (evt) => {
+    alert('Cleared All');
+    this.setState ({
+      lines: [],
+      circlePoints: [],
+    })
+  }
+
+  circleClick = (evt) => {
+    alert('circle on');
+    this.setState ({
+      eraser: false,
+      currentTool: 'circle',
+      brush: false,
+      circle: true,
+    })
+  }
+
+
+  RenderCircles = () => {
+
+    let circleArray = []
+    const circlePoints = this.state.circlePoints;
+    for(let i = 0; i < circlePoints.length; i++) {
+      console.log(circlePoints[i])
+      const midpoint = circlePoints[i][0]
+      const endpoint = circlePoints[i][1]
+
+      circleArray.push(
+      <Circle
+        key={i}
+        // x={(endpoint[0] + startpoint[0]) / 2}
+        // y={(endpoint[1] + startpoint[1]) / 2}
+        x={midpoint[0]}
+        y={midpoint[1]}
+        width={Math.abs(endpoint[0] - midpoint[0]) * 2}
+        height={Math.abs(endpoint[1] - midpoint[1]) * 2}
+        fill={'Blue'}
+      />
+    )
+    }
+    return circleArray;
   }
 
   render() {
@@ -139,7 +216,7 @@ class Drawing extends Component {
           <Row>
             <button
               onClick={this.brushClick}
-              id="eraserButton"
+              id="brushButton"
               className={this.state.currentTool === 'brush' ? 'activeTool' : ''}
             >
               Brush
@@ -148,12 +225,30 @@ class Drawing extends Component {
           <Row>
             <button
               onClick={this.eraserClick}
-              id="brushButton"
+              id="eraserButton"
               className={this.state.currentTool === 'eraser' ? 'activeTool' : ''}
             >
               Eraser
             </button>
           </Row>
+          <Row>
+            <button
+              onClick={this.circleClick}
+              id="circleButton"
+              className={this.state.currentTool === 'circle' ? 'activeTool' : ''}
+            >
+              Circle
+            </button>
+          </Row>
+          <Row>
+            <button
+              onClick={this.clearClick}
+              id="clearButton"
+            >
+              Clear
+            </button>
+          </Row>
+
         </Container>
 
 
@@ -169,16 +264,17 @@ class Drawing extends Component {
           }}
         >
           <Layer>
-            <Rect
-            width={stageWidth / 2}
-            height={stageHeight / 2}
-            image={MapImg}
-            fill={'white'}
-            />
-            {this.state.lines.map((line, i) => (
-              <Line key={i} points={line} stroke="red" />
-            ))}
-
+            <MapImg />
+          </Layer>
+          <Layer>
+            {
+              this.RenderCircles()
+            }
+          </Layer>
+          <Layer>
+            {
+              this.state.lines.map((line, i) => (<Line key={i} points={line} stroke="red" />))
+            }
           </Layer>
         </Stage>
       </div>
