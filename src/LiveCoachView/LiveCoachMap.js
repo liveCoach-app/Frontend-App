@@ -40,6 +40,7 @@ class Drawing extends Component {
     eraser: false,
     brush: true,
     circle: false,
+    arrow: false,
   };
 
 
@@ -149,6 +150,7 @@ class Drawing extends Component {
       currentTool: 'eraser',
       brush: false,
       circle: false,
+      arrow: false,
     })
   }
 
@@ -159,6 +161,7 @@ class Drawing extends Component {
       currentTool: 'brush',
       brush: true,
       circle: false,
+      arrow: false,
     })
   }
 
@@ -177,6 +180,18 @@ class Drawing extends Component {
       currentTool: 'circle',
       brush: false,
       circle: true,
+      arrow: false,
+    })
+  }
+
+  arrowClick = (evt) => {
+    alert('arrow on');
+    this.setState ({
+      eraser: false,
+      currentTool: 'arrow',
+      brush: false,
+      circle: false,
+      arrow: true,
     })
   }
 
@@ -186,20 +201,22 @@ class Drawing extends Component {
     let circleArray = []
     const circlePoints = this.state.circlePoints;
     for(let i = 0; i < circlePoints.length; i++) {
-      console.log(circlePoints[i])
       const midpoint = circlePoints[i][0]
       const endpoint = circlePoints[i][1]
+      console.log('midpoint: ' + midpoint + ' endpoint: ' + endpoint);
 
+
+      const xsquared = (endpoint[0] - midpoint[0]) * (endpoint[0] - midpoint[0]);
+      const ysquared = (endpoint[1] - midpoint[1]) * (endpoint[1] - midpoint[1]);
+      const distance = Math.sqrt(xsquared + ysquared);
       circleArray.push(
       <Circle
         key={i}
-        // x={(endpoint[0] + startpoint[0]) / 2}
-        // y={(endpoint[1] + startpoint[1]) / 2}
         x={midpoint[0]}
         y={midpoint[1]}
-        width={Math.abs(endpoint[0] - midpoint[0]) * 2}
-        height={Math.abs(endpoint[1] - midpoint[1]) * 2}
-        fill={'Blue'}
+        width={distance * 2}
+        height={distance * 2}
+        stroke={'blue'}
       />
     )
     }
@@ -238,6 +255,15 @@ class Drawing extends Component {
               className={this.state.currentTool === 'circle' ? 'activeTool' : ''}
             >
               Circle
+            </button>
+          </Row>
+          <Row>
+            <button
+              onClick={this.arrowClick}
+              id="arrowButton"
+              className={this.state.currentTool === 'arrow' ? 'activeTool' : ''}
+            >
+              arrow
             </button>
           </Row>
           <Row>

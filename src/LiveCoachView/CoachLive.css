@@ -165,7 +165,7 @@
 }
 
 
-#eraserButton, #brushButton, #clearButton, #circleButton {
+#eraserButton, #brushButton, #clearButton, #circleButton, #arrowButton {
   width: 4vw;
   height: 2vw;
 }
