@@ -156,12 +156,10 @@
   background-color: #D8D8D8;
   border: 2px solid black;
   justify-content: center;
-  padding-top: 15%;
-}
+  display: flex;
+  vertical-align: center;
+  padding-top: 15%
 
-#mapBodyDiv {
-  margin:auto;
-  background-color: red;
 }
 
 

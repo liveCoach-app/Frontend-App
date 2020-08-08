@@ -61,8 +61,8 @@ function Home() {
     <div>
       <ul>
         <h2>Home</h2>
-        <li><Link to="/studentStart">Student Start Screen</Link></li>
-        <li><Link to="/coachLive">Live Coach View</Link></li>
+        <li><Link to="/StudentStart">Student Start Screen</Link></li>
+        <li><Link to="/CoachLive">Live Coach View</Link></li>
       </ul>
     </div>
   );
