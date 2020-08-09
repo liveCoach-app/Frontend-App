@@ -5,20 +5,14 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import './StartSession.css';
+import './StudentStartSession.css';
 import StartSessionBar from './StartSessionBar.js';
 import DetailsBar from './DetailsBar.js';
 import ProfileSideBar from './ProfileSideBar.js'
 
 
 
-
-
-
-
-
 export default function StudentStart() {
-
   const [pastGames, setPastGames] = React.useState([
     {
       id: 0,

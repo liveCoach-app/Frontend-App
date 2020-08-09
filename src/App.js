@@ -10,6 +10,7 @@ import Col from 'react-bootstrap/Col';
 
 import StudentStart from './StudentStartSession/StartSession.js';
 import LiveCoachView from './LiveCoachView/CoachLive.js';
+import StartScreen from './StartSession/StartScreen.js'
 
 import {
   BrowserRouter as Router,
@@ -41,6 +42,9 @@ export default function App() {
         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
         <Switch>
+          <Route path="/StartScreen">
+            <StartScreen />
+          </Route>
           <Route path="/StudentStart">
             <StudentStart />
           </Route>
@@ -63,6 +67,7 @@ function Home() {
         <h2>Home</h2>
         <li><Link to="/StudentStart">Student Start Screen</Link></li>
         <li><Link to="/CoachLive">Live Coach View</Link></li>
+        <li><Link to="/StartScreen">Start Screen</Link> </li>
       </ul>
     </div>
   );
