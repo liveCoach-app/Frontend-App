@@ -155,19 +155,15 @@
   height: 91vh;
   background-color: #D8D8D8;
   border: 2px solid black;
-  text-align: center;
-  justify-content: flex-end;
-  padding-top: 50px;
-  padding-right: 25px;
-}
+  justify-content: center;
+  display: flex;
+  vertical-align: center;
+  padding-top: 15%
 
-#mapBodyDiv {
-  margin:auto;
-  background-color: red;
 }
 
 
-#eraserButton, #brushButton {
+#eraserButton, #brushButton, #clearButton, #circleButton, #arrowButton {
   width: 4vw;
   height: 2vw;
 }
