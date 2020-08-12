@@ -7,16 +7,12 @@ import Col from 'react-bootstrap/Col';
 import './StartSession.css'
 
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
   useHistory,
 } from "react-router-dom";
 
 
 export default function StartScreen() {
-  const [disc, setDisc] = React.useState('');
+
 
   const history = useHistory();
 
@@ -26,7 +22,7 @@ export default function StartScreen() {
   return(
     <Container fluid id="startScreenContainer">
       <Row id="headerRow">
-        <Col xs={2}><img src="HeaderImg.png" id="headerImg" /></Col>
+        <Col xs={2}><img alt="hello" src="HeaderImg.png" id="headerImg" /></Col>
       </Row>
       <Row id="startScreenRow" xs={12}>
         <form id="startForm" onSubmit={handleSubmit}>

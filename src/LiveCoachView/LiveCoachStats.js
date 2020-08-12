@@ -6,10 +6,6 @@ import Col from 'react-bootstrap/Col';
 import './CoachLive.css';
 
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
   useHistory,
 } from "react-router-dom";
 

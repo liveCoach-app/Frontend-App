@@ -1,7 +1,6 @@
 
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -80,10 +79,10 @@ export default function StudentStart() {
     let tempGamelist = pastGames.slice();
     const buttonId = evt.currentTarget.id;
     for(let i = 0; i < tempGamelist.length; i ++) {
-      if(tempGamelist[i].selected == true) {
+      if(tempGamelist[i].selected === true) {
         tempGamelist[i].selected = false;
       }
-      if(tempGamelist[i].id == buttonId) {
+      if(tempGamelist[i].id === buttonId) {
         tempGamelist[i].selected = true;
       }
     }

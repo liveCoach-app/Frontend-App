@@ -1,8 +1,7 @@
-import React, { Component } from 'react'
+import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import '../CoachLive.css';
 
 
@@ -20,7 +19,7 @@ export default function MapSideBar(props) {
       <Row>
         <button
           onClick={brushClick}
-          id="brushButton"
+          id="brush"
           className={currentTool === 'brush' ? 'activeTool' : ''}
         >
           Brush
@@ -29,7 +28,7 @@ export default function MapSideBar(props) {
       <Row>
         <button
           onClick={arrowClick}
-          id="arrowButton"
+          id="arrow"
           className={currentTool === 'arrow' ? 'activeTool' : ''}
         >
           Arrow
@@ -38,7 +37,7 @@ export default function MapSideBar(props) {
       <Row>
         <button
           onClick={eraserClick}
-          id="eraserButton"
+          id="eraser"
           className={currentTool === 'eraser' ? 'activeTool' : ''}
         >
           Eraser
@@ -47,7 +46,7 @@ export default function MapSideBar(props) {
       <Row>
         <button
           onClick={circleClick}
-          id="circleButton"
+          id="circle"
           className={currentTool === 'circle' ? 'activeTool' : ''}
         >
           Circle
@@ -56,7 +55,7 @@ export default function MapSideBar(props) {
       <Row>
         <button
           onClick={clearClick}
-          id="clearButton"
+          id="clear"
         >
           Clear
         </button>

@@ -1,6 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
 import useImage from 'use-image';
-import Konva from 'konva';
 import { Image } from 'react-konva';
 
 export default function MapImg () {

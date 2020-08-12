@@ -1,8 +1,6 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import '../CoachLive.css';
 
 
@@ -46,7 +44,6 @@ function NotesButton(props) {
 
 function NoteTab(props) {
   const isShowing = props.show;
-  console.log(isShowing);
 
 
   const render = () => {
@@ -54,7 +51,6 @@ function NoteTab(props) {
       return(<div></div>);
     }
     else {
-      console.log('showing');
       return(
         <form id="noteBox">
           <label id="noteTime"> Time: 42:35</label>

@@ -1,22 +1,19 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Arrow } from 'react-konva';
-import Konva from 'konva';
 
 
 export default function RenderArrows(arrowPoints) {
-  let arrowArray = []
-  arrowPoints.map((arrow, i) => {
-    const startpoint = arrow[0]
-    const endpoint = arrow[1]
-    arrowArray.push(
+  return arrowPoints.map((line, i) => {
+    const startpoint = line.startpoint
+    const endpoint = line.endpoint
+    return(
       <Arrow
         key={i}
-        points={[startpoint[0], startpoint[1], endpoint[0], endpoint[1]]}
+        id={i + 'a'}
+        points={[startpoint.x, startpoint.y, endpoint.x, endpoint.y]}
         fill={'red'}
         stroke={'red'}
       />
-    )
-
-  })
-  return arrowArray;
+    );
+  });
 }

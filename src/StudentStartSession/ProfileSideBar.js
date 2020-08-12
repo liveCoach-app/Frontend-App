@@ -6,10 +6,6 @@ import Col from 'react-bootstrap/Col';
 
 
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
   useHistory,
 } from "react-router-dom";
 
@@ -33,12 +29,12 @@ export default function ProfileSideBar(props) {
 function UserProfile() {
   return (
     <Row id="userNameBody">
-      <img id="mainLogo" src="logo.png" />
+      <img alt="" id="mainLogo" src="logo.png" />
       <Col>
         <h1 className="userName">Dekempsy4</h1>
         <button id="settingsButton">
           <Row >
-            <img id="settingPic" src = "settings.png" />
+            <img alt="" id="settingPic" src = "settings.png" />
             <h2 className="settingTag">Settings</h2>
           </Row>
         </button>
@@ -73,7 +69,7 @@ function HistoryBar(props) {
         </ul>
 
         <button id="scheduleButton">
-          <img src="shceduleButton.png" id="scheduleImg" width="100%" height="100%"/>
+          <img alt="" src="shceduleButton.png" id="scheduleImg" width="100%" height="100%"/>
         </button>
 
       </Row>
@@ -92,7 +88,7 @@ function BackButton() {
 
   return (
     <button id="backButton" onClick={handleClick}>
-      <img src="backButton.png" id="backButtonImg" />
+      <img alt="" src="backButton.png" id="backButtonImg" />
     </button>
   );
 }
@@ -131,7 +127,7 @@ function PastGame(props) {
       <button className={classes} onClick={handleClick} id={game.id}>
         <Row>
           <div className="coachTag">Coach:</div>
-          <img src="logo.png" className="coachIcon" />
+          <img alt="" src="logo.png" className="coachIcon" />
           <div className="testerDiv">
             <div className="coachUsername">{game.username}</div>
           </div>
