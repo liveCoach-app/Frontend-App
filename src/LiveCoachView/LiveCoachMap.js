@@ -34,18 +34,50 @@ class Map extends Component {
 
   state = {
     lines: [],
+    /*
+      Lines is an array that contains arrays of points. Each array of points is a line
+      Ex: [[line1], [line2], [line3]]
+      Each individual line is a continueous array of values in which each odd value is an x coordiate and the next even value is it's corresponding y value.
+      Ex: line1 might look like: [1, 2, 3, 4, 5, 6]
+      The following example would draw a line through the points  (1,2) , (3,4) , and (5,6)
+    */
+
+
     circlePoints: [],
+
+    /*
+      The circlepoints array contains lines.
+      Ex: [ line1, line2, line3 ]
+      Each lines is different from the previous array as it is and object cointining a startpoint and endpoint value.
+      The startpoint and endpoint values are also objects with an x and y value corresponding to each coordinate.
+      Ex:
+          line 1 might be:
+          {
+           startpoint: point1,
+           endpoint; point2,
+          }
+          and point 1 might be:
+          {
+            x: 10,
+            y: 15,
+          }
+    */
+
     arrowPoints: [],
+    // Arrow points is stuctured the exact same way as the circle points.
     currentTool: 'brush',
   };
 
 
-
+  /*
+    This function is called inside the mouse move function and it returns an array in which the endpoint of the last line in either circlepoints or arrowpoints is set to the cursors current position
+  */
   changeEndpoint = (elementArray) => {
     const stage = this.stageRef.getStage();
     const point = stage.getPointerPosition();
     //make a copy in order to avoid direct mutation of state
     const tempArray = elementArray.slice(0);
+    //select the last line and change the endpoint x and y values
     tempArray[tempArray.length - 1].endpoint.x = point.x;
     tempArray[tempArray.length - 1].endpoint.y = point.y;
     return tempArray;
@@ -93,7 +125,7 @@ class Map extends Component {
       });
     }
     else if (this.state.currentTool === 'arrow') {
-      //create new entry in arrowPoints
+      //create new line entry in arrowPoints
       const stage = this.stageRef.getStage();
       const point = stage.getPointerPosition();
 
@@ -147,7 +179,7 @@ class Map extends Component {
 
 
 
-
+  //sets currentTool to the id value of the clicked button
   toolClick = (evt) => {
     const target = evt.currentTarget
     this.setState({
