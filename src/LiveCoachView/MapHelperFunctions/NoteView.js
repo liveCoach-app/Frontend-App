@@ -13,7 +13,7 @@ export default function NoteView() {
   }
 
   return (
-    <Row id="noteRow">
+    <Row className="noteRow">
       <NotesButton clicker={handleClick} showing={noteTab}/>
       <NoteTab show={noteTab} />
     </Row>
@@ -52,9 +52,9 @@ function NoteTab(props) {
     }
     else {
       return(
-        <form id="noteBox">
-          <label id="noteTime"> Time: 42:35</label>
-          <textarea placeholder="enter note" id="noteContent" />
+        <form className="noteBox">
+          <label className="noteTime"> Time: 42:35</label>
+          <textarea placeholder="enter note" className="noteContent" />
           <button>Enter</button>
         </form>
 

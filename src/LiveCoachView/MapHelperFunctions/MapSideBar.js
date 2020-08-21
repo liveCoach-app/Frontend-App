@@ -8,17 +8,14 @@ import '../CoachLive.css';
 export default function MapSideBar(props) {
 
 
-  const brushClick = props.brushClick;
-  const eraserClick = props.eraserClick;
-  const arrowClick = props.arrowClick;
-  const circleClick = props.circleClick;
+  const handleClick = props.handleClick;
   const clearClick = props.clearClick;
   const currentTool = props.currentTool;
   return (
     <Container>
       <Row>
         <button
-          onClick={brushClick}
+          onClick={handleClick}
           id="brush"
           className={currentTool === 'brush' ? 'activeTool' : ''}
         >
@@ -27,7 +24,7 @@ export default function MapSideBar(props) {
       </Row>
       <Row>
         <button
-          onClick={arrowClick}
+          onClick={handleClick}
           id="arrow"
           className={currentTool === 'arrow' ? 'activeTool' : ''}
         >
@@ -36,7 +33,7 @@ export default function MapSideBar(props) {
       </Row>
       <Row>
         <button
-          onClick={eraserClick}
+          onClick={handleClick}
           id="eraser"
           className={currentTool === 'eraser' ? 'activeTool' : ''}
         >
@@ -45,7 +42,7 @@ export default function MapSideBar(props) {
       </Row>
       <Row>
         <button
-          onClick={circleClick}
+          onClick={handleClick}
           id="circle"
           className={currentTool === 'circle' ? 'activeTool' : ''}
         >

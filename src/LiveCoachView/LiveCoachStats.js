@@ -9,6 +9,8 @@ import {
   useHistory,
 } from "react-router-dom";
 
+import TabScreen from './TabBar/TabScreen.js'
+
 
 
 export default function Stats() {
@@ -22,17 +24,17 @@ export default function Stats() {
   }
 
   return (
-    <Container id="statsContainer">
+    <Container className="statsContainer">
       <Row>
-        <Col xs={3} id="webCol"><button id="statistic" onClick={handleClick} className={tab === 'statistic' ? 'activeTab' : 'tabButton'}>
+        <Col xs={3} className="webCol"><button id="statistic" onClick={handleClick} className={tab === 'statistic' ? 'activeTab' : 'tabButton'}>
           Stat Website
         </button></Col>
-        <Col xs={3} id="tabCol"><button id="liveData" onClick={handleClick} className={tab === 'liveData' ? 'activeTab' : 'tabButton'}>Tab Screen</button></Col>
+        <Col xs={3} className="tabCol"><button id="liveData" onClick={handleClick} className={tab === 'liveData' ? 'activeTab' : 'tabButton'}>Tab Screen</button></Col>
       </Row>
-      <Row id="statRow">
+      <Row className="statRow">
         <MainStats tabName={tab}/>
       </Row>
-      <Row id="endRow">
+      <Row className="endRow">
         <EndSession />
       </Row>
     </Container>
@@ -48,14 +50,14 @@ function MainStats(props) {
       return (<div className="statisticBody">STAT SCREEN</div>);
     }
     else if(tabscreen === 'liveData') {
-      return (<div>TABSCREEN</div>);
+      return (<TabScreen />)
     }
     else {
       return (<div>Error</div>);
     }
   }
   return (
-    <div id="mainStatDiv">{mainBody()}</div>
+    <div className="mainStatDiv">{mainBody()}</div>
   );
 }
 
@@ -68,7 +70,7 @@ function EndSession() {
   }
 
   return(
-    <button id="endSessionBtn" onClick={handleClick}>
+    <button className="endSessionBtn" onClick={handleClick}>
       End Session
     </button>
   );

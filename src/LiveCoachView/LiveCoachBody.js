@@ -11,8 +11,8 @@ import Map from './LiveCoachMap'
 export default function LiveCoachBody() {
   return (
     <Row>
-      <Col xs={6} id="statsSide"><Stats /></Col>
-      <Col xs={6} id="mapSide"><Map /></Col>
+      <Col xs={6} className="statsSide"><Stats /></Col>
+      <Col xs={6} className="mapSide"><Map /></Col>
     </Row>
   )
 }

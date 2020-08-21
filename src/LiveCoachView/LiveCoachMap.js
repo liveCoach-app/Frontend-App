@@ -21,7 +21,7 @@ import deletePoint from './MapHelperFunctions/DeletePoint.js'
 
 export default function LiveCoachMap() {
   return (
-    <Container fluid id="mapContainer">
+    <Container fluid className="mapContainer">
       <NoteView />
       <Row id="mapRow">
         <Map />
@@ -95,21 +95,23 @@ class Map extends Component {
     else if(this.state.currentTool === 'eraser') {
       //get mouse pointer position
       const stage = this.stageRef.getStage();
+      const shapeType = stage.targetShape.getAttrs().type;
       const shapeId = stage.targetShape.id();
-      if(shapeId.charAt(1) === 'l') {
-        const tempArr = deletePoint(this.state.lines, shapeId.charAt(0));
+
+      if(shapeType === 'line') {
+        const tempArr = deletePoint(this.state.lines, shapeId);
         this.setState({
           lines: tempArr
         })
       }
-      else if(shapeId.charAt(1) === 'a') {
-        const tempArr = deletePoint(this.state.arrowPoints, shapeId.charAt(0));
+      else if(shapeType === 'arrow') {
+        const tempArr = deletePoint(this.state.arrowPoints, shapeId);
         this.setState({
           arrowPoints: tempArr
         })
       }
-      if(shapeId.charAt(1) === 'c') {
-        const tempArr = deletePoint(this.state.circlePoints, shapeId.charAt(0));
+      if(shapeType === 'circle') {
+        const tempArr = deletePoint(this.state.circlePoints, shapeId);
         this.setState({
           circlePoints: tempArr
         })
@@ -180,7 +182,7 @@ class Map extends Component {
 
 
   //sets currentTool to the id value of the clicked button
-  toolClick = (evt) => {
+  onClick = (evt) => {
     const target = evt.currentTarget
     this.setState({
       currentTool: target.id
@@ -202,13 +204,10 @@ class Map extends Component {
     const stageHeight = window.innerWidth / 2.4;
 
     return (
-      <div id="MapDiv">
+      <div className="MapDiv">
         <MapSideBar
-          brushClick={this.toolClick}
-          arrowClick={this.toolClick}
-          circleClick={this.toolClick}
+          handleClick={this.onClick}
           clearClick={this.clearClick}
-          eraserClick={this.toolClick}
           currentTool={this.state.currentTool}
         />
         <Stage
@@ -237,7 +236,7 @@ class Map extends Component {
           </Layer>
           <Layer>
             {
-              this.state.lines.map((line, i) => (<Line key={i} id={i + 'l'} points={line} stroke="red" fill={'red'}/>))
+              this.state.lines.map((line, i) => (<Line key={i} id={i} type="line" points={line} stroke="red" fill={'red'}/>))
             }
           </Layer>
         </Stage>

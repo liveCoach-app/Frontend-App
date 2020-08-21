@@ -10,12 +10,15 @@ export default function RenderCircles(circlePoints) {
     return (
       <Circle
         key={i}
-        id={i + 'c'}
+        id={i}
+        type={'circle'}
         x={midpoint.x}
         y={midpoint.y}
         width={distance * 2}
         height={distance * 2}
         stroke={'blue'}
+        fill={'blue'}
+        opacity={0.4}
       />
     );
   })
