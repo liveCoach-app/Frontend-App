@@ -1,0 +1,61 @@
+/** Stat Styles **/
+
+
+.championList {
+  background-color: grey;
+  width: 48.5vw;
+  height: 84vh;
+  overflow-y: scroll;
+  list-style: none;
+  padding: 0px;
+}
+
+.listItem {
+  background-color: #E1E1E1;
+  width: 101%;
+  height: 16vh;
+  border: 2px solid black;
+  margin-top: 5px;
+  margin-left: 4px;
+}
+
+.redItem {
+  margin-left: -10px;
+}
+
+.blueItem {
+  margin-right: 0px;
+}
+
+.champCol {
+  /* background-color: red; */
+
+}
+.mainCol {
+  /* background-color: green; */
+}
+
+.luxImg {
+  border-radius: 50%;
+  width: 75px;
+}
+
+.levelTag {
+  margin-top: -12%;
+  margin-left: 60%;
+}
+
+
+.trinketImg {
+  border-radius: 40%;
+  width: 25px;
+  margin-left: -40%;
+  margin-bottom: 15%;
+}
+
+/* .redCol {
+  background-color: red;
+}
+.blueCol {
+  background-color: blue;
+} */

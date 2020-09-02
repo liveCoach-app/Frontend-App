@@ -163,28 +163,3 @@
 .activeTool {
   background-color: #D8D8D8;
 }
-
-
-
-
-
-/** Stat Styles **/
-
-
-.championList {
-  background-color: red;
-  width: 48.5vw;
-  height: 84vh;
-  overflow-y: scroll;
-  list-style: none;
-  padding: 5px;
-  padding-right: 5px;
-}
-
-.listItem {
-  background-color: green;
-}
-
-.champCol {
-
-}
