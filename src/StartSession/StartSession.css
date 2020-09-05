@@ -1,0 +1,56 @@
+#startScreenContainer {
+  background-color: #000B4E;
+}
+
+#headerRow {
+
+  padding-top: 1%;
+  padding-left: 1%;
+  height: 5vh;
+}
+
+#headerImg {
+  width: 200px;
+  height: 50px;
+}
+
+#startScreenRow {
+
+  height: 85vh;
+  justify-content: center;
+  padding-top: 8%;
+}
+
+#startForm {
+  padding-top: 110px;
+  background-color: #D3E3FD;
+  height: 400px;
+  width: 500px;
+  text-align: center;
+}
+
+#startHeader {
+  color: #010B4D;
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: 3em;
+
+}
+#startTag {
+  color: #010B4D;
+  font-size: 1.2em;
+}
+
+#startSessionButton {
+  background-color: #2F47E1;
+  color: white;
+  width: 200px;
+  height: 40px;
+  margin-top: 2%;
+}
+
+
+#footerRow {
+  background-color: #000227;
+  height: 10vh;
+}

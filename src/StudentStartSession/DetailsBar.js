@@ -1,12 +1,7 @@
-
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-
-
-
 
 
 export default function DetailsBar(props) {
@@ -18,7 +13,7 @@ export default function DetailsBar(props) {
   };
 
   for(let i = 0; i < pastGames.length; i++) {
-    if(pastGames[i].selected == true) {
+    if(pastGames[i].selected === true) {
       selectedGame = pastGames[i];
     }
   }
@@ -50,7 +45,7 @@ function Recording() {
   return (
     <Row>
       <button id="recordingButton">
-        <img src="recording.png" id="recordingSymbol"/>
+        <img src="recording.png" id="recordingSymbol" alt=""/>
         <div id="recordingTag">Recording</div>
       </button>
     </Row>

@@ -2,95 +2,150 @@ import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import './CoachLive.css';
 
 
-import { Stage, Layer, Rect, Text, Circle, Line, Image, Group } from 'react-konva';
-import Konva from 'konva';
-import NoteView from './NoteView.js'
-import MapImg from './MapImg.png'
+import { Stage, Layer, Line } from 'react-konva';
 
 
-export default function Map() {
+import NoteView from './MapHelperFunctions/NoteView.js'
+import MapSideBar from './MapHelperFunctions/MapSideBar.js'
+import MapImg from './MapHelperFunctions/MapImg.js'
+import renderArrows from './MapHelperFunctions/RenderArrows.js'
+import renderCircles from './MapHelperFunctions/RenderCircles.js'
+import makePoint from './MapHelperFunctions/MakePoint.js'
+import makeLine from './MapHelperFunctions/MakeLine.js'
+import deletePoint from './MapHelperFunctions/DeletePoint.js'
 
+
+
+export default function LiveCoachMap() {
   return (
-    <Container fluid id="mapContainer">
+    <Container fluid className="mapContainer">
       <NoteView />
       <Row id="mapRow">
-        <Drawing />
+        <Map />
       </Row>
     </Container>
   );
 }
 
+class Map extends Component {
 
-
-class Drawing extends Component {
   state = {
     lines: [],
+    /*
+      Lines is an array that contains arrays of points. Each array of points is a line
+      Ex: [[line1], [line2], [line3]]
+      Each individual line is a continueous array of values in which each odd value is an x coordiate and the next even value is it's corresponding y value.
+      Ex: line1 might look like: [1, 2, 3, 4, 5, 6]
+      The following example would draw a line through the points  (1,2) , (3,4) , and (5,6)
+    */
+
+
+    circlePoints: [],
+
+    /*
+      The circlepoints array contains lines.
+      Ex: [ line1, line2, line3 ]
+      Each lines is different from the previous array as it is and object cointining a startpoint and endpoint value.
+      The startpoint and endpoint values are also objects with an x and y value corresponding to each coordinate.
+      Ex:
+          line 1 might be:
+          {
+           startpoint: point1,
+           endpoint; point2,
+          }
+          and point 1 might be:
+          {
+            x: 10,
+            y: 15,
+          }
+    */
+
+    arrowPoints: [],
+    // Arrow points is stuctured the exact same way as the circle points.
     currentTool: 'brush',
-    eraser: false,
-    brush: true,
   };
 
 
+  /*
+    This function is called inside the mouse move function and it returns an array in which the endpoint of the last line in either circlepoints or arrowpoints is set to the cursors current position
+  */
+  changeEndpoint = (elementArray) => {
+    const stage = this.stageRef.getStage();
+    const point = stage.getPointerPosition();
+    //make a copy in order to avoid direct mutation of state
+    const tempArray = elementArray.slice(0);
+    //select the last line and change the endpoint x and y values
+    tempArray[tempArray.length - 1].endpoint.x = point.x;
+    tempArray[tempArray.length - 1].endpoint.y = point.y;
+    return tempArray;
+  };
 
   handleMouseDown = () => {
-      this._drawing = true;
 
-      if(this.state.brush === true){
-        // add line
+    this._drawing = true;
+
+    if(this.state.currentTool === 'brush'){
+      this.setState({
+        lines: [...this.state.lines, []]
+      });
+    }
+    else if(this.state.currentTool === 'eraser') {
+      //get mouse pointer position
+      const stage = this.stageRef.getStage();
+      const shapeType = stage.targetShape.getAttrs().type;
+      const shapeId = stage.targetShape.id();
+
+      if(shapeType === 'line') {
+        const tempArr = deletePoint(this.state.lines, shapeId);
         this.setState({
-          lines: [...this.state.lines, []]
-        });
+          lines: tempArr
+        })
       }
-      else if(this.state.eraser === true) {
-        const stage = this.stageRef.getStage();
-        const point = stage.getPointerPosition();
-
-
-        const xRange = [point.x - 15, point.x + 15]
-
-        const yRange = [point.y - 15, point.y + 15]
-
-
-
-
-        console.log('ERASING pointX: ' + point.x +' point y ' + point.y)
-
-        const tempLines = this.state.lines;
-
-        for(let i = 0; i < tempLines.length; i++) {
-          const currentLine = tempLines[i];
-
-          for(let z = 0; z < currentLine.length - 1; z = z+2) {
-
-            if(currentLine[z] > xRange[0] && currentLine[z] < xRange[1]) {
-              if(currentLine[z + 1] > yRange[0] && currentLine[z + 1] < yRange[1]) {
-                tempLines.splice(i, 1);
-
-                this.setState ({
-                  lines: tempLines
-                });
-                return;
-              }
-            }
-          }
-        }
+      else if(shapeType === 'arrow') {
+        const tempArr = deletePoint(this.state.arrowPoints, shapeId);
+        this.setState({
+          arrowPoints: tempArr
+        })
       }
+      if(shapeType === 'circle') {
+        const tempArr = deletePoint(this.state.circlePoints, shapeId);
+        this.setState({
+          circlePoints: tempArr
+        })
+      }
+
+    }
+    else if (this.state.currentTool === 'circle') {
+      //create new line entry in circlePoints
+      const stage = this.stageRef.getStage();
+      const point = stage.getPointerPosition();
+      this.setState({
+        circlePoints: [...this.state.circlePoints, makeLine(makePoint(point.x, point.y), makePoint(point.x, point.y))]
+      });
+    }
+    else if (this.state.currentTool === 'arrow') {
+      //create new line entry in arrowPoints
+      const stage = this.stageRef.getStage();
+      const point = stage.getPointerPosition();
+
+      this.setState({
+        arrowPoints: [...this.state.arrowPoints, makeLine( makePoint(point.x, point.y),  makePoint(point.x, point.y) )]
+      });
+    };
   };
 
-  handleMouseMove = e => {
-    //  no drawing - skipping
-    //  alert('drawing ' + !this._drawing + ' erasing ' + this.state.erasing)
 
+
+
+  handleMouseMove = e => {
     if (!this._drawing) {
       return;
     }
 
-
-    if(this.state.brush === true) {
+    if(this.state.currentTool === 'brush') {
       const stage = this.stageRef.getStage();
       const point = stage.getPointerPosition();
       const { lines } = this.state;
@@ -105,58 +160,56 @@ class Drawing extends Component {
         lines: lines.concat()
       });
     }
-
+    else if (this.state.currentTool === 'circle') {
+      const tempElement = this.changeEndpoint(this.state.circlePoints)
+      this.setState({
+        circlePoints: tempElement
+      })
+    }
+    else if (this.state.currentTool === 'arrow') {
+      const tempElement = this.changeEndpoint(this.state.arrowPoints);
+      this.setState({
+        arrowPoints: tempElement
+      })
+    }
   };
+
 
   handleMouseUp = () => {
     this._drawing = false;
   };
 
-  eraserClick = (evt) => {
-    alert('eraser on');
-    this.setState ({
-      eraser: true,
-      currentTool: 'eraser',
-      brush: false,
+
+
+  //sets currentTool to the id value of the clicked button
+  onClick = (evt) => {
+    const target = evt.currentTarget
+    this.setState({
+      currentTool: target.id
     })
   }
-  brushClick = (evt) => {
-    alert('brush on');
-    this.setState ({
-      eraser: false,
-      currentTool: 'brush',
-      brush: true,
+
+  clearClick = (evt) => {
+    this.setState({
+      circlePoints: [],
+      lines: [],
+      arrowPoints: [],
     })
   }
+
+
 
   render() {
-    const stageWidth = 600;
-    const stageHeight = 600;
+    const stageWidth = window.innerWidth / 2.4;
+    const stageHeight = window.innerWidth / 2.4;
 
     return (
-      <div>
-        <Container>
-          <Row>
-            <button
-              onClick={this.brushClick}
-              id="eraserButton"
-              className={this.state.currentTool === 'brush' ? 'activeTool' : ''}
-            >
-              Brush
-            </button>
-          </Row>
-          <Row>
-            <button
-              onClick={this.eraserClick}
-              id="brushButton"
-              className={this.state.currentTool === 'eraser' ? 'activeTool' : ''}
-            >
-              Eraser
-            </button>
-          </Row>
-        </Container>
-
-
+      <div className="MapDiv">
+        <MapSideBar
+          handleClick={this.onClick}
+          clearClick={this.clearClick}
+          currentTool={this.state.currentTool}
+        />
         <Stage
           container={'#mapRow'}
           width={stageWidth}
@@ -169,16 +222,22 @@ class Drawing extends Component {
           }}
         >
           <Layer>
-            <Rect
-            width={stageWidth / 2}
-            height={stageHeight / 2}
-            image={MapImg}
-            fill={'white'}
-            />
-            {this.state.lines.map((line, i) => (
-              <Line key={i} points={line} stroke="red" />
-            ))}
-
+            <MapImg />
+          </Layer>
+          <Layer>
+            {
+              renderCircles(this.state.circlePoints)
+            }
+          </Layer>
+          <Layer>
+            {
+              renderArrows(this.state.arrowPoints)
+            }
+          </Layer>
+          <Layer>
+            {
+              this.state.lines.map((line, i) => (<Line key={i} id={i} type="line" points={line} stroke="red" fill={'red'}/>))
+            }
           </Layer>
         </Stage>
       </div>

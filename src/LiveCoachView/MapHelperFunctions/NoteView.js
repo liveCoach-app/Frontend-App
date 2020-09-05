@@ -1,9 +1,7 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import './CoachLive.css';
+import '../CoachLive.css';
 
 
 export default function NoteView() {
@@ -15,7 +13,7 @@ export default function NoteView() {
   }
 
   return (
-    <Row id="noteRow">
+    <Row className="noteRow">
       <NotesButton clicker={handleClick} showing={noteTab}/>
       <NoteTab show={noteTab} />
     </Row>
@@ -46,7 +44,6 @@ function NotesButton(props) {
 
 function NoteTab(props) {
   const isShowing = props.show;
-  console.log(isShowing);
 
 
   const render = () => {
@@ -54,11 +51,10 @@ function NoteTab(props) {
       return(<div></div>);
     }
     else {
-      console.log('showing');
       return(
-        <form id="noteBox">
-          <label id="noteTime"> Time: 42:35</label>
-          <textarea placeholder="enter note" id="noteContent" />
+        <form className="noteBox">
+          <label className="noteTime"> Time: 42:35</label>
+          <textarea placeholder="enter note" className="noteContent" />
           <button>Enter</button>
         </form>
 

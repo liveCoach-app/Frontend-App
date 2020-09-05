@@ -1,27 +1,21 @@
-
-
-
-
-
-
 /** HEADER STYLES **/
-#studentHeader {
+.studentHeader {
   width: 6vh;
   height: 6vh;
 }
 
-#headerDiv {
+.headerDiv {
   height: 5vh;
   text-align: center;
 }
 
-#studentTag {
+.studentTag {
   color: #797979;
   font-size: 1.5vw;
   margin-right: 10px;
 }
 
-#studentUsername {
+.studentUsername {
   color: #797979;
   font-size: 1.5vw;
   margin-left: 10px;
@@ -29,18 +23,18 @@
 
 /** STATSCREEN STYLES **/
 
-#statsSide {
+.statsSide {
   height: 95vh;
   padding: 0;
 }
 
-#statRow {
+.statRow {
   height: 84vh;
   border: 2px solid black;
   background-color: #D8D8D8;
 }
 
-#statsContainer {
+.statsContainer {
   width: 95%;
   margin-right: 0px;
 }
@@ -63,7 +57,7 @@
 
 
 
-#webCol {
+.webCol {
   padding: 0px;
 }
 
@@ -72,11 +66,11 @@
 
 
 
-#tabCol {
+.tabCol {
   padding: 0px;
 }
 
-#endSessionBtn {
+.endSessionBtn {
   margin-right: auto;
   margin-left: auto;
   width: 15vw;
@@ -88,8 +82,7 @@
   height: 5vh;
 }
 
-#mainStatDiv {
-  background-color: green;
+.mainStatDiv {
   margin: auto;
 }
 
@@ -110,7 +103,7 @@
   background-color: #D8D8D8;
 }
 
-#noteBox {
+.noteBox {
   position: absolute;
   background-color: #D8D8D8;
   border: 2px solid black;
@@ -122,56 +115,76 @@
   z-index: 1;
 }
 
-#noteContent {
+.noteContent {
   width: 90%;
   height: 70%;
   background-color: #E1E1E1;
   resize: none;
 }
 
-#noteTime {
+.noteTime {
   font-size: 1.5vw;
   margin-top: 7px;
   margin-left: 5%;
 }
 
     /** Map Styles **/
-#mapSide {
+.mapSide {
   padding: 0px;
   height: 95vh;
 
 }
-#mapContainer {
+.mapContainer {
   width: 95%;
   margin-left: 0px;
 }
 
-#noteRow {
+.noteRow {
   text-align: right;
-
 }
 
 #mapRow {
   height: 91vh;
   background-color: #D8D8D8;
   border: 2px solid black;
-  text-align: center;
-  justify-content: flex-end;
-  padding-top: 50px;
-  padding-right: 25px;
-}
+  justify-content: center;
+  display: flex;
+  vertical-align: center;
+  padding-top: 2%;
 
-#mapBodyDiv {
-  margin:auto;
-  background-color: red;
 }
 
 
-#eraserButton, #brushButton {
+#eraser, #brush, #clear, #circle, #arrow {
   width: 4vw;
   height: 2vw;
 }
 
 .activeTool {
   background-color: #D8D8D8;
+}
+
+
+
+
+
+/** Stat Styles **/
+
+
+.championList {
+  background-color: red;
+  width: 48.5vw;
+  height: 84vh;
+  overflow-y: scroll;
+  list-style: none;
+  padding: 5px;
+  padding-right: 5px;
+}
+
+.listItem {
+  background-color: green;
+}
+
+.champCol {
+
 }
