@@ -4,18 +4,18 @@ import Row from 'react-bootstrap/Row';
 import '../CoachLive.css';
 
 
-export default function NoteView() {
+export default function NoteView(props) {
 
-  const [noteTab, setNoteTab] = React.useState(false);
+  const noteTab = props.noteTab;
+  const handleClick = props.noteClick;
+  const noteSubmit = props.noteSubmit;
+  const annotations = props.annotationList;
 
-  const handleClick = (evt) => {
-    setNoteTab(!noteTab);
-  }
 
   return (
     <Row className="noteRow">
       <NotesButton clicker={handleClick} showing={noteTab}/>
-      <NoteTab show={noteTab} />
+      <NoteTab show={noteTab} noteSubmit={noteSubmit} annotations={annotations} />
     </Row>
   );
 
@@ -27,6 +27,7 @@ export default function NoteView() {
 function NotesButton(props) {
   const handleClick = props.clicker;
   const isShowing = props.showing;
+
 
   let buttonClass = 'noteButton';
   if(isShowing) {
@@ -40,11 +41,32 @@ function NotesButton(props) {
   );
 }
 
+function Annotations(props) {
+  const annotations = props.annotations;
+  console.log(annotations)
+  if(annotations === void(0)) {
+    return (<div>none detected</div>)
+  }
+  else {
+    return (
+      annotations.map(
+        (annotation, i)=> {
+          return (
+            <li key={i} className="annotation">
+              <div className="annotationText">{annotation.text}</div>
+            </li>
+          )
+        }
+      )
+    )
+  }
 
+}
 
 function NoteTab(props) {
   const isShowing = props.show;
-
+  const noteSubmit = props.noteSubmit;
+  const annotations = props.annotations;
 
   const render = () => {
     if(isShowing === false) {
@@ -52,12 +74,16 @@ function NoteTab(props) {
     }
     else {
       return(
-        <form className="noteBox">
-          <label className="noteTime"> Time: 42:35</label>
-          <textarea placeholder="enter note" className="noteContent" />
-          <button>Enter</button>
-        </form>
-
+        <div>
+          <form className="noteBox" onSubmit={noteSubmit}>
+            <label className="noteTime"> Time: 42:35</label>
+            <textarea placeholder="enter note" className="noteContent"/>
+            <button>Enter</button>
+          </form>
+          <ul className="annotationList">
+            <Annotations annotations={annotations}/>
+          </ul>
+        </div>
       );
     }
   }

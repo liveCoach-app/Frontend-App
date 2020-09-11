@@ -18,27 +18,58 @@ import {
 
 
 
-export default function App() {
-  return (
-    <Router>
-      <div>
-        <Switch>
-          <Route path="/StartScreen">
-            <StartScreen />
-          </Route>
-          <Route path="/StudentStart">
-            <StudentStart />
-          </Route>
-          <Route path="/CoachLive">
-            <LiveCoachView />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
-  );
+export default class App extends React.Component {
+
+
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      id: "",
+    };
+  }
+
+
+  fetchId = async () => {
+    const value = await fetch("https://lca.devlabs-projects.info/sessions", {
+      method: "POST",
+    })
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            id: result.data.id,
+          });
+          return result.data.id;
+        }
+      )
+      return(value);
+  };
+
+
+  render() {
+    return (
+      <Router>
+        <div>
+          <Switch>
+            <Route path="/StartScreen">
+              <StartScreen fetchId={this.fetchId}/>
+            </Route>
+            <Route path="/StudentStart">
+              <StudentStart />
+            </Route>
+            <Route path="/CoachLive" >
+              <LiveCoachView annotate={this.createAnnotation}/>
+            </Route>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
+        </div>
+      </Router>
+    );
+  }
+
 }
 
 function Home() {

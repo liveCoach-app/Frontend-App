@@ -7,6 +7,7 @@ import './CoachLive.css';
 
 
 import { Stage, Layer, Line } from 'react-konva';
+import { withRouter } from "react-router-dom";
 
 
 import NoteView from './MapHelperFunctions/NoteView.js'
@@ -20,18 +21,12 @@ import deletePoint from './MapHelperFunctions/DeletePoint.js'
 
 
 
-export default function LiveCoachMap() {
-  return (
-    <Container fluid className="mapContainer">
-      <NoteView />
-      <Row id="mapRow">
-        <Map />
-      </Row>
-    </Container>
-  );
-}
-
 class Map extends Component {
+
+
+
+
+
 
   state = {
     lines: [],
@@ -67,7 +62,109 @@ class Map extends Component {
     arrowPoints: [],
     // Arrow points is stuctured the exact same way as the circle points.
     currentTool: 'brush',
+
+    //Note view state
+    noteTab: false,
+
+    id: "",
+    annotations: [],
   };
+
+
+  componentDidMount() {
+    const { history } = this.props;
+    const pathname = history.location.pathname.substring(11, 35);
+    this.state.id = pathname;
+    this.updateAnnotations(pathname);
+  }
+
+  updateAnnotations = (sessionId) => {
+    (async () => {
+      console.log('fetching annotations from id: ' + sessionId);
+
+      const annotateRequest = await this.listAnnotations(sessionId);
+      this.setState({
+        annotations: annotateRequest.data,
+      })
+      console.log("annotations" + this.state.annotations);
+    })();
+  }
+
+
+  listAnnotations = (sessionId) => {
+    const endpoint = "https://lca.devlabs-projects.info/annotations/?session=" + sessionId;
+
+    const asyncFunct = async () => {
+      const response = await fetch(endpoint).then(res => res.json()).then((result) => {
+        return result;
+      });
+      return response;
+    }
+    return asyncFunct();
+  }
+
+
+
+  createAnnotation = async (thisText, drawings, id) => {
+    fetch("https://lca.devlabs-projects.info/annotations", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "text": thisText,
+        "session": this.state.id,
+        "drawings": drawings,
+      }),
+    })
+      .then( res =>  console.log(res))
+      let newAnnotations = this.state.annotations;
+      newAnnotations.push({
+        "text": thisText,
+        "session": this.state.id,
+        "drawings": drawings,
+      });
+      console.log('new annotations ' + newAnnotations);
+      this.setState({
+        annotations: newAnnotations,
+      })
+  }
+
+
+
+
+  noteSubmit = async (evt) => {
+    evt.preventDefault();
+    const text = evt.currentTarget.children[1].value;
+    const sampleDrawing = {
+      "brush": this.state.lines,
+      "circle": this.state.circlePoints,
+      "arrow": this.state.arrowpoints,
+    }
+    this.createAnnotation(text, sampleDrawing, this.state.id)
+      .then(
+        result => {
+          console.log('annotation created');
+        }
+
+      )
+
+  }
+
+
+
+  noteClick = () => {
+    const currentNote = this.state.noteTab;
+    this.setState({
+      noteTab: !currentNote
+    })
+  }
+
+
+
+
+
+
 
 
   /*
@@ -181,7 +278,6 @@ class Map extends Component {
   };
 
 
-
   //sets currentTool to the id value of the clicked button
   onClick = (evt) => {
     const target = evt.currentTarget
@@ -205,43 +301,51 @@ class Map extends Component {
     const stageHeight = window.innerWidth / 2.4;
 
     return (
-      <div className="MapDiv">
-        <MapSideBar
-          handleClick={this.onClick}
-          clearClick={this.clearClick}
-          currentTool={this.state.currentTool}
-        />
-        <Stage
-          container={'#mapRow'}
-          width={stageWidth}
-          height={stageHeight}
-          onContentMousedown={this.handleMouseDown}
-          onContentMousemove={this.handleMouseMove}
-          onContentMouseup={this.handleMouseUp}
-          ref={node => {
-            this.stageRef = node;
-          }}
-        >
-          <Layer>
-            <MapImg />
-          </Layer>
-          <Layer>
-            {
-              renderCircles(this.state.circlePoints)
-            }
-          </Layer>
-          <Layer>
-            {
-              renderArrows(this.state.arrowPoints)
-            }
-          </Layer>
-          <Layer>
-            {
-              this.state.lines.map((line, i) => (<Line key={i} id={i} type="line" points={line} stroke="red" fill={'red'}/>))
-            }
-          </Layer>
-        </Stage>
-      </div>
+      <Container fluid className="mapContainer">
+        <NoteView noteTab={this.state.noteTab} noteClick={this.noteClick} noteSubmit={this.noteSubmit} annotationList={this.state.annotations}/>
+        <Row id="mapRow">
+          <div className="MapDiv">
+            <MapSideBar
+              handleClick={this.onClick}
+              clearClick={this.clearClick}
+              currentTool={this.state.currentTool}
+            />
+            <Stage
+              container={'#mapRow'}
+              width={stageWidth}
+              height={stageHeight}
+              onContentMousedown={this.handleMouseDown}
+              onContentMousemove={this.handleMouseMove}
+              onContentMouseup={this.handleMouseUp}
+              ref={node => {
+                this.stageRef = node;
+              }}
+            >
+              <Layer>
+                <MapImg />
+              </Layer>
+              <Layer>
+                {
+                  renderCircles(this.state.circlePoints)
+                }
+              </Layer>
+              <Layer>
+                {
+                  renderArrows(this.state.arrowPoints)
+                }
+              </Layer>
+              <Layer>
+                {
+                  this.state.lines.map((line, i) => (<Line key={i} id={i} type="line" points={line} stroke="red" fill={'red'}/>))
+                }
+              </Layer>
+            </Stage>
+          </div>
+        </Row>
+      </Container>
     );
   }
 }
+
+
+export default withRouter(Map);

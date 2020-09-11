@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 import './StartSession.css'
 
 import { withRouter } from "react-router-dom";
-import { useHistory } from 'react-router';
+
 
 
 
@@ -16,46 +16,20 @@ import { useHistory } from 'react-router';
 
  class StartScreen extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null,
-      isLoaded: false,
-      items: []
-    };
-  }
-
-  componentDidMount() {
-    fetch("https://lca.devlabs-projects.info/sessions", {
-      method: "POST",
-
-    })
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-          this.setState({
-            isLoaded: true,
-            items: result
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
-  }
-
-
 
   render() {
     const { history } = this.props;
 
-    const handleClick = () => {
-      alert("the id is: " + this.state.items.data.id)
-      history.push('/CoachLive')
+    const handleClick = async (evt) => {
+      evt.preventDefault();
+      this.props.fetchId()
+        .then(result => {
+  
+          return ('/CoachLive/' + result);
+      })
+        .then(result => history.push(result))
+
+
     }
 
 
