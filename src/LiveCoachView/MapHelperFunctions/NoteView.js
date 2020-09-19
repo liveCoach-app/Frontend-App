@@ -18,10 +18,7 @@ export default function NoteView(props) {
       <NoteTab show={noteTab} noteSubmit={noteSubmit} annotations={annotations} />
     </Row>
   );
-
 }
-
-
 
 
 function NotesButton(props) {

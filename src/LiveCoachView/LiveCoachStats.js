@@ -15,9 +15,6 @@ import TabScreen from './TabBar/TabScreen.js'
 
 export default function Stats() {
   const [tab, setTab] = React.useState('statistic');
-
-
-
   const handleClick = (evt) => {
     const target = evt.currentTarget;
     setTab(target.id);
@@ -66,7 +63,7 @@ function EndSession() {
   const history = useHistory();
 
   const handleClick = (evt) => {
-    history.push('/studentStart');
+    history.push('/StartScreen');
   }
 
   return(

@@ -17,16 +17,12 @@ import renderArrows from './MapHelperFunctions/RenderArrows.js'
 import renderCircles from './MapHelperFunctions/RenderCircles.js'
 import makePoint from './MapHelperFunctions/MakePoint.js'
 import makeLine from './MapHelperFunctions/MakeLine.js'
+import makeFetchRequest from '../HelperFunctions/MakeFetchRequest.js'
 import deletePoint from './MapHelperFunctions/DeletePoint.js'
 
 
 
 class Map extends Component {
-
-
-
-
-
 
   state = {
     lines: [],
@@ -73,61 +69,54 @@ class Map extends Component {
 
   componentDidMount() {
     const { history } = this.props;
-    const pathname = history.location.pathname.substring(11, 35);
+    const pathname = history.location.search.substring(1);
+    console.log("selected path: " + pathname)
     this.state.id = pathname;
     this.updateAnnotations(pathname);
   }
 
-  updateAnnotations = (sessionId) => {
-    (async () => {
-      console.log('fetching annotations from id: ' + sessionId);
-
-      const annotateRequest = await this.listAnnotations(sessionId);
-      this.setState({
-        annotations: annotateRequest.data,
-      })
-      console.log("annotations" + this.state.annotations);
-    })();
+  updateAnnotations = async (sessionId) => {
+    console.log('fetching annotations from id: ' + sessionId);
+    const annotateRequest = await this.listAnnotations(sessionId);
+    this.setState({
+      annotations: annotateRequest.data,
+    })
+    console.log("annotations" + this.state.annotations);
   }
 
 
-  listAnnotations = (sessionId) => {
+  listAnnotations = async (sessionId) => {
     const endpoint = "https://lca.devlabs-projects.info/annotations/?session=" + sessionId;
-
-    const asyncFunct = async () => {
-      const response = await fetch(endpoint).then(res => res.json()).then((result) => {
-        return result;
-      });
-      return response;
-    }
-    return asyncFunct();
+    const response = await makeFetchRequest(endpoint, "GET");
+    return response;
   }
 
 
 
   createAnnotation = async (thisText, drawings, id) => {
-    fetch("https://lca.devlabs-projects.info/annotations", {
+    const request = await fetch("https://lca.devlabs-projects.info/annotations", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         "text": thisText,
-        "session": this.state.id,
+        "session": id,
         "drawings": drawings,
       }),
     })
-      .then( res =>  console.log(res))
-      let newAnnotations = this.state.annotations;
-      newAnnotations.push({
-        "text": thisText,
-        "session": this.state.id,
-        "drawings": drawings,
-      });
-      console.log('new annotations ' + newAnnotations);
-      this.setState({
-        annotations: newAnnotations,
-      })
+    const jsonResponse = request.json();
+    console.log("create annotation response: " + jsonResponse);
+    let newAnnotations = this.state.annotations;
+    newAnnotations.push({
+      "text": thisText,
+      "session": id,
+      "drawings": drawings,
+    });
+    console.log('new annotations ' + newAnnotations);
+    this.setState({
+      annotations: newAnnotations,
+    })
   }
 
 
@@ -141,13 +130,8 @@ class Map extends Component {
       "circle": this.state.circlePoints,
       "arrow": this.state.arrowpoints,
     }
-    this.createAnnotation(text, sampleDrawing, this.state.id)
-      .then(
-        result => {
-          console.log('annotation created');
-        }
-
-      )
+    const submit = await this.createAnnotation(text, sampleDrawing, this.state.id)
+    console.log('annotation created');
 
   }
 
@@ -159,12 +143,6 @@ class Map extends Component {
       noteTab: !currentNote
     })
   }
-
-
-
-
-
-
 
 
   /*

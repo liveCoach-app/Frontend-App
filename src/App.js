@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import StudentStart from './StudentStartSession/StartSession.js';
 import LiveCoachView from './LiveCoachView/CoachLive.js';
 import StartScreen from './StartSession/StartScreen.js'
+import makeFetchRequest from './HelperFunctions/MakeFetchRequest.js'
 
 import {
   BrowserRouter as Router,
@@ -30,20 +31,12 @@ export default class App extends React.Component {
   }
 
 
-  fetchId = async () => {
-    const value = await fetch("https://lca.devlabs-projects.info/sessions", {
-      method: "POST",
-    })
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            id: result.data.id,
-          });
-          return result.data.id;
-        }
-      )
-      return(value);
+  createSession = async () => {
+    const response = await makeFetchRequest("https://lca.devlabs-projects.info/sessions", "POST");
+    this.setState({
+      id: response.data.id,
+    });
+    return response.data.id;
   };
 
 
@@ -53,7 +46,7 @@ export default class App extends React.Component {
         <div>
           <Switch>
             <Route path="/StartScreen">
-              <StartScreen fetchId={this.fetchId}/>
+              <StartScreen createSession={this.createSession}/>
             </Route>
             <Route path="/StudentStart">
               <StudentStart />

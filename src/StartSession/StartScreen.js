@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './StartSession.css'
 
-import { withRouter } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 
 
@@ -14,44 +14,38 @@ import { withRouter } from "react-router-dom";
 
 
 
- class StartScreen extends React.Component {
+ export default function StartScreen(props) {
 
 
-  render() {
-    const { history } = this.props;
+  const history = useHistory();
 
-    const handleClick = async (evt) => {
-      evt.preventDefault();
-      this.props.fetchId()
-        .then(result => {
-  
-          return ('/CoachLive/' + result);
-      })
-        .then(result => history.push(result))
+  const handleSubmit = async (evt) => {
+    evt.preventDefault();
 
+    const id = await props.createSession();
 
-    }
-
-
-
-
-    return(
-      <Container fluid id="startScreenContainer">
-        <Row id="headerRow">
-          <Col xs={2}><img alt="hello" src="HeaderImg.png" id="headerImg" /></Col>
-        </Row>
-        <Row id="startScreenRow" xs={12}>
-          <form id="startForm" onSubmit={handleClick}>
-            <div><label id="startHeader">Start Live Session</label></div>
-            <div><label id="startTag">You can begin coaching here</label></div>
-            <button id="startSessionButton"><div id="">Start</div></button>
-          </form>
-        </Row>
-        <Row id="footerRow">
-        </Row>
-      </Container>
-    );
+    const liveUrl = '/CoachLive/';
+    history.push({
+      pathname: liveUrl,
+      search: id,
+    });
   }
-}
 
-export default withRouter(StartScreen);
+
+  return(
+    <Container fluid id="startScreenContainer">
+      <Row id="headerRow">
+        <Col xs={2}><img alt="hello" src="HeaderImg.png" id="headerImg" /></Col>
+      </Row>
+      <Row id="startScreenRow" xs={12}>
+        <form id="startForm" onSubmit={handleSubmit}>
+          <div><label id="startHeader">Start Live Session</label></div>
+          <div><label id="startTag">You can begin coaching here</label></div>
+          <button id="startSessionButton"><div id="">Start</div></button>
+        </form>
+      </Row>
+      <Row id="footerRow">
+      </Row>
+    </Container>
+  );
+}
