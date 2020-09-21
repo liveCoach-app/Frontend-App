@@ -4,9 +4,9 @@ import Distance from './Distance.js'
 
 export default function RenderCircles(circlePoints) {
   return circlePoints.map((line, i) => {
-    const midpoint = line.startpoint
-    const endpoint = line.endpoint
-    const distance = Distance(endpoint, midpoint)
+    const midpoint = line.startpoint;
+    const endpoint = line.endpoint;
+    const distance = Distance(endpoint, midpoint);
     return (
       <Circle
         key={i}

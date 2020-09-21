@@ -6,15 +6,23 @@ import '../CoachLive.css';
 
 export default function NoteView(props) {
 
-  const noteTab = props.noteTab;
+
   const handleClick = props.noteClick;
   const noteSubmit = props.noteSubmit;
   const annotations = props.annotationList;
 
+  const [noteTab, setNoteTab] = React.useState(false)
+
+
+  const noteClick = () => {
+    const currentNote = noteTab;
+    setNoteTab(!currentNote);
+  }
+
 
   return (
     <Row className="noteRow">
-      <NotesButton clicker={handleClick} showing={noteTab}/>
+      <NotesButton clicker={noteClick} showing={noteTab}/>
       <NoteTab show={noteTab} noteSubmit={noteSubmit} annotations={annotations} />
     </Row>
   );

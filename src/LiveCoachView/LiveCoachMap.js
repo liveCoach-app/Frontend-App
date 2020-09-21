@@ -10,6 +10,8 @@ import { Stage, Layer, Line } from 'react-konva';
 import { withRouter } from "react-router-dom";
 
 
+
+import Map from './MapHelperFunctions/Map.js'
 import NoteView from './MapHelperFunctions/NoteView.js'
 import MapSideBar from './MapHelperFunctions/MapSideBar.js'
 import MapImg from './MapHelperFunctions/MapImg.js'
@@ -22,7 +24,7 @@ import deletePoint from './MapHelperFunctions/DeletePoint.js'
 
 
 
-class Map extends Component {
+class LiveCoachMap extends Component {
 
   state = {
     lines: [],
@@ -60,20 +62,20 @@ class Map extends Component {
     currentTool: 'brush',
 
     //Note view state
-    noteTab: false,
 
     id: "",
     annotations: [],
   };
 
 
-  componentDidMount() {
+  componentDidMount(evt) {
     const { history } = this.props;
     const pathname = history.location.search.substring(1);
     console.log("selected path: " + pathname)
     this.state.id = pathname;
     this.updateAnnotations(pathname);
   }
+
 
   updateAnnotations = async (sessionId) => {
     console.log('fetching annotations from id: ' + sessionId);
@@ -119,9 +121,6 @@ class Map extends Component {
     })
   }
 
-
-
-
   noteSubmit = async (evt) => {
     evt.preventDefault();
     const text = evt.currentTarget.children[1].value;
@@ -132,25 +131,16 @@ class Map extends Component {
     }
     const submit = await this.createAnnotation(text, sampleDrawing, this.state.id)
     console.log('annotation created');
-
   }
 
 
 
-  noteClick = () => {
-    const currentNote = this.state.noteTab;
-    this.setState({
-      noteTab: !currentNote
-    })
-  }
 
 
   /*
     This function is called inside the mouse move function and it returns an array in which the endpoint of the last line in either circlepoints or arrowpoints is set to the cursors current position
   */
-  changeEndpoint = (elementArray) => {
-    const stage = this.stageRef.getStage();
-    const point = stage.getPointerPosition();
+  changeEndpoint = (elementArray, point) => {
     //make a copy in order to avoid direct mutation of state
     const tempArray = elementArray.slice(0);
     //select the last line and change the endpoint x and y values
@@ -159,10 +149,12 @@ class Map extends Component {
     return tempArray;
   };
 
-  handleMouseDown = () => {
+  handleMouseDown = (evt) => {
+    this._drawing = true
 
-    this._drawing = true;
 
+    const stage = evt.currentTarget;
+    const point = stage.getPointerPosition();
     if(this.state.currentTool === 'brush'){
       this.setState({
         lines: [...this.state.lines, []]
@@ -170,7 +162,6 @@ class Map extends Component {
     }
     else if(this.state.currentTool === 'eraser') {
       //get mouse pointer position
-      const stage = this.stageRef.getStage();
       const shapeType = stage.targetShape.getAttrs().type;
       const shapeId = stage.targetShape.id();
 
@@ -196,16 +187,14 @@ class Map extends Component {
     }
     else if (this.state.currentTool === 'circle') {
       //create new line entry in circlePoints
-      const stage = this.stageRef.getStage();
-      const point = stage.getPointerPosition();
+
       this.setState({
         circlePoints: [...this.state.circlePoints, makeLine(makePoint(point.x, point.y), makePoint(point.x, point.y))]
       });
     }
     else if (this.state.currentTool === 'arrow') {
       //create new line entry in arrowPoints
-      const stage = this.stageRef.getStage();
-      const point = stage.getPointerPosition();
+
 
       this.setState({
         arrowPoints: [...this.state.arrowPoints, makeLine( makePoint(point.x, point.y),  makePoint(point.x, point.y) )]
@@ -221,9 +210,11 @@ class Map extends Component {
       return;
     }
 
+    const stage = e.currentTarget;
+    const point = stage.getPointerPosition();
+
     if(this.state.currentTool === 'brush') {
-      const stage = this.stageRef.getStage();
-      const point = stage.getPointerPosition();
+
       const { lines } = this.state;
 
       let lastLine = lines[lines.length - 1];
@@ -237,26 +228,24 @@ class Map extends Component {
       });
     }
     else if (this.state.currentTool === 'circle') {
-      const tempElement = this.changeEndpoint(this.state.circlePoints)
+      const tempElement = this.changeEndpoint(this.state.circlePoints, point)
       this.setState({
         circlePoints: tempElement
       })
     }
     else if (this.state.currentTool === 'arrow') {
-      const tempElement = this.changeEndpoint(this.state.arrowPoints);
+      const tempElement = this.changeEndpoint(this.state.arrowPoints, point);
       this.setState({
         arrowPoints: tempElement
       })
     }
   };
 
-
   handleMouseUp = () => {
     this._drawing = false;
   };
 
 
-  //sets currentTool to the id value of the clicked button
   onClick = (evt) => {
     const target = evt.currentTarget
     this.setState({
@@ -273,57 +262,34 @@ class Map extends Component {
   }
 
 
+  //sets currentTool to the id value of the clicked button
+
 
   render() {
-    const stageWidth = window.innerWidth / 2.4;
-    const stageHeight = window.innerWidth / 2.4;
+
 
     return (
       <Container fluid className="mapContainer">
-        <NoteView noteTab={this.state.noteTab} noteClick={this.noteClick} noteSubmit={this.noteSubmit} annotationList={this.state.annotations}/>
-        <Row id="mapRow">
-          <div className="MapDiv">
-            <MapSideBar
-              handleClick={this.onClick}
-              clearClick={this.clearClick}
-              currentTool={this.state.currentTool}
-            />
-            <Stage
-              container={'#mapRow'}
-              width={stageWidth}
-              height={stageHeight}
-              onContentMousedown={this.handleMouseDown}
-              onContentMousemove={this.handleMouseMove}
-              onContentMouseup={this.handleMouseUp}
-              ref={node => {
-                this.stageRef = node;
-              }}
-            >
-              <Layer>
-                <MapImg />
-              </Layer>
-              <Layer>
-                {
-                  renderCircles(this.state.circlePoints)
-                }
-              </Layer>
-              <Layer>
-                {
-                  renderArrows(this.state.arrowPoints)
-                }
-              </Layer>
-              <Layer>
-                {
-                  this.state.lines.map((line, i) => (<Line key={i} id={i} type="line" points={line} stroke="red" fill={'red'}/>))
-                }
-              </Layer>
-            </Stage>
-          </div>
-        </Row>
+        <NoteView
+          noteTab={this.state.noteTab}
+          noteClick={this.noteClick}
+            noteSubmit={this.noteSubmit} annotationList={this.state.annotations}
+          />
+        <Map
+          currentTool={this.state.currentTool} onClick={this.onClick}
+          clearClick={this.clearClick}
+          circlePoints={this.state.circlePoints}
+          arrowPoints={this.state.arrowPoints}
+          lines={this.state.lines}
+          handleMouseDown={this.handleMouseDown}
+          handleMouseMove={this.handleMouseMove}
+          handleMouseUp={this.handleMouseUp}
+
+        />
       </Container>
     );
   }
 }
 
 
-export default withRouter(Map);
+export default withRouter(LiveCoachMap);
