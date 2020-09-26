@@ -152,6 +152,15 @@
   overflow: hidden;
 }
 
+.annotationDeleteButton {
+  position: fixed;
+  right: 4vw;
+}
+.trashImg {
+  width: 25px;
+  height: 25px;
+}
+
     /** Map Styles **/
 .mapSide {
   padding: 0px;

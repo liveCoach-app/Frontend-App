@@ -10,6 +10,7 @@ export default function NoteView(props) {
   const handleClick = props.noteClick;
   const noteSubmit = props.noteSubmit;
   const annotations = props.annotationList;
+  const deleteAnnotation = props.deleteAnnotation;
 
   const [noteTab, setNoteTab] = React.useState(false)
 
@@ -19,11 +20,14 @@ export default function NoteView(props) {
     setNoteTab(!currentNote);
   }
 
-
   return (
     <Row className="noteRow">
       <NotesButton clicker={noteClick} showing={noteTab}/>
-      <NoteTab show={noteTab} noteSubmit={noteSubmit} annotations={annotations} />
+      <NoteTab
+        show={noteTab}
+        noteSubmit={noteSubmit}
+        annotations={annotations} deleteAnnotation={deleteAnnotation}
+      />
     </Row>
   );
 }
@@ -32,7 +36,6 @@ export default function NoteView(props) {
 function NotesButton(props) {
   const handleClick = props.clicker;
   const isShowing = props.showing;
-
 
   let buttonClass = 'noteButton';
   if(isShowing) {
@@ -53,12 +56,22 @@ function Annotations(props) {
     return (<div>none detected</div>)
   }
   else {
+
+
+
+
     return (
       annotations.map(
         (annotation, i)=> {
           return (
             <li key={i} className="annotation">
-              <div className="annotationText">{annotation.text}</div>
+              <div className="annotationText">
+                {annotation.text}
+                <button className="annotationDeleteButton" onClick={props.deleteAnnotation}>
+                  <div className={i} />
+                  <img alt="trashLogo" src="https://image.shutterstock.com/image-vector/recycle-bin-icon-logo-isolated-260nw-1701277879.jpg" className="trashImg"/>
+                </button>
+              </div>
             </li>
           )
         }
@@ -86,7 +99,7 @@ function NoteTab(props) {
             <button>Enter</button>
           </form>
           <ul className="annotationList">
-            <Annotations annotations={annotations}/>
+            <Annotations annotations={annotations} deleteAnnotation={props.deleteAnnotation}/>
           </ul>
         </div>
       );

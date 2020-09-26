@@ -121,8 +121,30 @@ class LiveCoachMap extends Component {
     })
   }
 
+
+  deleteAnnotation = async (e) => {
+
+    // DELETE THE ANNOTATION
+    const annotationKey = e.currentTarget.children[0].className
+    const selectedAnnotation = this.state.annotations[annotationKey]._id;
+    const endpoint = 'https://lca.devlabs-projects.info/annotations/' + selectedAnnotation;
+    const response = await makeFetchRequest(endpoint, 'DELETE')
+    console.log(response)
+
+    //UPDATE STATE
+    let tempAnnotations = this.state.annotations;
+    tempAnnotations.splice(annotationKey, 1);
+    this.setState({
+      annotations: tempAnnotations,
+    })
+
+
+  }
+
+
+
   noteSubmit = async (evt) => {
-    evt.preventDefault();
+    evt.preventDefault()
     const text = evt.currentTarget.children[1].value;
     const sampleDrawing = {
       "brush": this.state.lines,
@@ -274,6 +296,7 @@ class LiveCoachMap extends Component {
           noteTab={this.state.noteTab}
           noteClick={this.noteClick}
             noteSubmit={this.noteSubmit} annotationList={this.state.annotations}
+            deleteAnnotation={this.deleteAnnotation}
           />
         <Map
           currentTool={this.state.currentTool} onClick={this.onClick}
