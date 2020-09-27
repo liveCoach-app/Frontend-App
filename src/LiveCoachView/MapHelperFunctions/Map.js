@@ -1,15 +1,8 @@
 import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import '../CoachLive.css';
-
-
-
 import { Stage, Layer, Line } from 'react-konva';
-import { withRouter } from "react-router-dom";
-
-
 import MapSideBar from './MapSideBar.js'
 import MapImg from './MapImg.js'
 import renderArrows from './RenderArrows.js'

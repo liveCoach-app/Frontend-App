@@ -3,11 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Row from 'react-bootstrap/Row';
 import '../CoachLive.css';
 
+import Annotations from './Annotations.js'
+
 
 export default function NoteView(props) {
 
-
-  const handleClick = props.noteClick;
   const noteSubmit = props.noteSubmit;
   const annotations = props.annotationList;
   const deleteAnnotation = props.deleteAnnotation;
@@ -49,37 +49,7 @@ function NotesButton(props) {
   );
 }
 
-function Annotations(props) {
-  const annotations = props.annotations;
-  console.log(annotations)
-  if(annotations === void(0)) {
-    return (<div>none detected</div>)
-  }
-  else {
 
-
-
-
-    return (
-      annotations.map(
-        (annotation, i)=> {
-          return (
-            <li key={i} className="annotation">
-              <div className="annotationText">
-                {annotation.text}
-                <button className="annotationDeleteButton" onClick={props.deleteAnnotation}>
-                  <div className={i} />
-                  <img alt="trashLogo" src="https://image.shutterstock.com/image-vector/recycle-bin-icon-logo-isolated-260nw-1701277879.jpg" className="trashImg"/>
-                </button>
-              </div>
-            </li>
-          )
-        }
-      )
-    )
-  }
-
-}
 
 function NoteTab(props) {
   const isShowing = props.show;

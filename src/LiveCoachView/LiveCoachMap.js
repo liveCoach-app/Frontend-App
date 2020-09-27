@@ -1,22 +1,15 @@
 import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
 import './CoachLive.css';
 
 
-
-import { Stage, Layer, Line } from 'react-konva';
 import { withRouter } from "react-router-dom";
 
 
 
 import Map from './MapHelperFunctions/Map.js'
 import NoteView from './MapHelperFunctions/NoteView.js'
-import MapSideBar from './MapHelperFunctions/MapSideBar.js'
-import MapImg from './MapHelperFunctions/MapImg.js'
-import renderArrows from './MapHelperFunctions/RenderArrows.js'
-import renderCircles from './MapHelperFunctions/RenderCircles.js'
 import makePoint from './MapHelperFunctions/MakePoint.js'
 import makeLine from './MapHelperFunctions/MakeLine.js'
 import makeFetchRequest from '../HelperFunctions/MakeFetchRequest.js'
@@ -65,25 +58,29 @@ class LiveCoachMap extends Component {
 
     id: "",
     annotations: [],
+    currentAnnotationId: '',
   };
 
 
   componentDidMount(evt) {
-    const { history } = this.props;
-    const pathname = history.location.search.substring(1);
-    console.log("selected path: " + pathname)
-    this.state.id = pathname;
-    this.updateAnnotations(pathname);
+    this.setUpAnnotations()
   }
 
 
-  updateAnnotations = async (sessionId) => {
+  updateAnnotationList = async (sessionId) => {
     console.log('fetching annotations from id: ' + sessionId);
     const annotateRequest = await this.listAnnotations(sessionId);
     this.setState({
       annotations: annotateRequest.data,
     })
-    console.log("annotations" + this.state.annotations);
+
+    if(this.state.annotations.length !== 0) {
+      const currentId = this.state.annotations[this.state.annotations.length - 1]._id
+      this.setState({
+        currentAnnotationId: currentId
+      })
+    }
+
   }
 
 
@@ -95,30 +92,67 @@ class LiveCoachMap extends Component {
 
 
 
-  createAnnotation = async (thisText, drawings, id) => {
-    const request = await fetch("https://lca.devlabs-projects.info/annotations", {
+  setUpAnnotations = async () => {
+    const { history } = this.props;
+    const pathname = history.location.search.substring(1);
+    console.log("selected path: " + pathname)
+    this.setState({
+      id: pathname
+    })
+    await this.updateAnnotationList(pathname)
+    if(this.state.annotations.length === 0) {
+      await this.createAnnotation(pathname)
+    }
+  }
+
+
+  createAnnotation = async (id) => {
+    await fetch("https://lca.devlabs-projects.info/annotations", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        "text": thisText,
+        "text": 'current',
         "session": id,
-        "drawings": drawings,
+        "drawings": 'hello',
       }),
     })
-    const jsonResponse = request.json();
-    console.log("create annotation response: " + jsonResponse);
-    let newAnnotations = this.state.annotations;
-    newAnnotations.push({
-      "text": thisText,
-      "session": id,
-      "drawings": drawings,
-    });
-    console.log('new annotations ' + newAnnotations);
-    this.setState({
-      annotations: newAnnotations,
+    await this.updateAnnotationList(id)
+  }
+
+
+
+  updateAnnotation = async (text) => {
+    const drawing = {
+        "brush": this.state.lines,
+        "circle": this.state.circlePoints,
+        "arrow": this.state.arrowpoints,
+    }
+    const endpoint = "https://lca.devlabs-projects.info/annotations/" + this.state.currentAnnotationId
+    await fetch(endpoint, {
+      method: "PUT",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "text": text,
+        "session": this.state.id,
+        "drawings": drawing,
+      }),
     })
+    console.log("annotation updated!");
+    this.updateAnnotationList(this.state.id);
+  }
+
+
+
+  submitAnnotation = async (evt) => {
+    evt.preventDefault()
+    const text = evt.currentTarget.children[1].value;
+    await this.updateAnnotation(text);
+    await this.createAnnotation(this.state.id);
+    console.log('annotation created');
   }
 
 
@@ -131,29 +165,12 @@ class LiveCoachMap extends Component {
     const response = await makeFetchRequest(endpoint, 'DELETE')
     console.log(response)
 
-    //UPDATE STATE
-    let tempAnnotations = this.state.annotations;
-    tempAnnotations.splice(annotationKey, 1);
-    this.setState({
-      annotations: tempAnnotations,
-    })
 
-
+    this.updateAnnotationList(this.state.id)
   }
 
 
 
-  noteSubmit = async (evt) => {
-    evt.preventDefault()
-    const text = evt.currentTarget.children[1].value;
-    const sampleDrawing = {
-      "brush": this.state.lines,
-      "circle": this.state.circlePoints,
-      "arrow": this.state.arrowpoints,
-    }
-    const submit = await this.createAnnotation(text, sampleDrawing, this.state.id)
-    console.log('annotation created');
-  }
 
 
 
@@ -265,6 +282,7 @@ class LiveCoachMap extends Component {
 
   handleMouseUp = () => {
     this._drawing = false;
+    this.updateAnnotation('current');
   };
 
 
@@ -295,9 +313,10 @@ class LiveCoachMap extends Component {
         <NoteView
           noteTab={this.state.noteTab}
           noteClick={this.noteClick}
-            noteSubmit={this.noteSubmit} annotationList={this.state.annotations}
-            deleteAnnotation={this.deleteAnnotation}
-          />
+          noteSubmit={this.submitAnnotation}
+          annotationList={this.state.annotations}
+          deleteAnnotation={this.deleteAnnotation}
+        />
         <Map
           currentTool={this.state.currentTool} onClick={this.onClick}
           clearClick={this.clearClick}
@@ -307,7 +326,6 @@ class LiveCoachMap extends Component {
           handleMouseDown={this.handleMouseDown}
           handleMouseMove={this.handleMouseMove}
           handleMouseUp={this.handleMouseUp}
-
         />
       </Container>
     );

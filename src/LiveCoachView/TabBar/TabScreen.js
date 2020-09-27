@@ -37,7 +37,7 @@ export default function TabScreen() {
           </li>
         )
       }else {
-        return;
+        return <div></div>;
       }
     })
   }
@@ -65,7 +65,7 @@ export default function TabScreen() {
         )
       }
       else{
-        return;
+        return <div></div>
       }
     })
   }
