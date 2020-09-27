@@ -7,13 +7,10 @@ import Annotations from './Annotations.js'
 
 
 export default function NoteView(props) {
-
   const noteSubmit = props.noteSubmit;
   const annotations = props.annotationList;
   const deleteAnnotation = props.deleteAnnotation;
-
   const [noteTab, setNoteTab] = React.useState(false)
-
 
   const noteClick = () => {
     const currentNote = noteTab;

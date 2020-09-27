@@ -68,7 +68,6 @@ class LiveCoachMap extends Component {
 
 
   updateAnnotationList = async (sessionId) => {
-    console.log('fetching annotations from id: ' + sessionId);
     const annotateRequest = await this.listAnnotations(sessionId);
     this.setState({
       annotations: annotateRequest.data,
@@ -95,7 +94,6 @@ class LiveCoachMap extends Component {
   setUpAnnotations = async () => {
     const { history } = this.props;
     const pathname = history.location.search.substring(1);
-    console.log("selected path: " + pathname)
     this.setState({
       id: pathname
     })
@@ -163,9 +161,6 @@ class LiveCoachMap extends Component {
     const selectedAnnotation = this.state.annotations[annotationKey]._id;
     const endpoint = 'https://lca.devlabs-projects.info/annotations/' + selectedAnnotation;
     const response = await makeFetchRequest(endpoint, 'DELETE')
-    console.log(response)
-
-
     this.updateAnnotationList(this.state.id)
   }
 

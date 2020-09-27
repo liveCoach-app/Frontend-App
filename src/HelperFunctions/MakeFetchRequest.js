@@ -7,6 +7,5 @@ export default async function makeFetchRequest(endpoint, fetchMethod) {
     method: fetchMethod,
   })
   const jsonResponse = await response.json();
-  console.log(jsonResponse);
   return jsonResponse;
 }
