@@ -32,7 +32,7 @@ export default class App extends React.Component {
 
 
   createSession = async () => {
-    const response = await makeFetchRequest("https://lca.devlabs-projects.info/sessions", "POST");
+    const response = await makeFetchRequest("https://lca.devlabs-projects.info/sessions", "POST", '');
     this.setState({
       id: response.data.id,
     });

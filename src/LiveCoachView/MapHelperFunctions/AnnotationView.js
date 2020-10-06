@@ -6,23 +6,23 @@ import '../CoachLive.css';
 import Annotations from './Annotations.js'
 
 
-export default function NoteView(props) {
-  const noteSubmit = props.noteSubmit;
+export default function AnnotationView(props) {
+  const annotationSubmit = props.annotationSubmit;
   const annotations = props.annotationList;
   const deleteAnnotation = props.deleteAnnotation;
-  const [noteTab, setNoteTab] = React.useState(false)
+  const [annotationTab, setAnnotationTab] = React.useState(false)
 
-  const noteClick = () => {
-    const currentNote = noteTab;
-    setNoteTab(!currentNote);
+  const annotationClick = () => {
+    const currentAnnotation = annotationTab;
+    setAnnotationTab(!currentAnnotation);
   }
 
   return (
-    <Row className="noteRow">
-      <NotesButton clicker={noteClick} showing={noteTab}/>
-      <NoteTab
-        show={noteTab}
-        noteSubmit={noteSubmit}
+    <Row className="annotationRow">
+      <AnnotationsButton clicker={annotationClick} showing={annotationTab}/>
+      <AnnotationTab
+        show={annotationTab}
+        annotationSubmit={annotationSubmit}
         annotations={annotations} deleteAnnotation={deleteAnnotation}
       />
     </Row>
@@ -30,27 +30,27 @@ export default function NoteView(props) {
 }
 
 
-function NotesButton(props) {
+function AnnotationsButton(props) {
   const handleClick = props.clicker;
   const isShowing = props.showing;
 
-  let buttonClass = 'noteButton';
+  let buttonClass = 'annotationButton';
   if(isShowing) {
-    buttonClass = 'noteButton activeNoteButton';
+    buttonClass = 'annotationButton activeAnnotationButton';
   }
 
   return(
       <button className={buttonClass} onClick={handleClick}>
-        <strong>+</strong> Add Note
+        <strong>+</strong> Annotate
       </button>
   );
 }
 
 
 
-function NoteTab(props) {
+function AnnotationTab(props) {
   const isShowing = props.show;
-  const noteSubmit = props.noteSubmit;
+  const annotationSubmit = props.annotationSubmit;
   const annotations = props.annotations;
 
   const render = () => {
@@ -60,9 +60,9 @@ function NoteTab(props) {
     else {
       return(
         <div>
-          <form className="noteBox" onSubmit={noteSubmit}>
-            <label className="noteTime"> Time: 42:35</label>
-            <textarea placeholder="enter note" className="noteContent"/>
+          <form className="annotationBox" onSubmit={annotationSubmit}>
+            <label className="annotationTime"> Time: 42:35</label>
+            <textarea placeholder="enter annotation text" className="annotationContent"/>
             <button>Enter</button>
           </form>
           <ul className="annotationList">

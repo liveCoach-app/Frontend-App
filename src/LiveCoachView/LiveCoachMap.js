@@ -9,7 +9,7 @@ import { withRouter } from "react-router-dom";
 
 
 import Map from './MapHelperFunctions/Map.js'
-import NoteView from './MapHelperFunctions/NoteView.js'
+import AnnotationView from './MapHelperFunctions/AnnotationView.js'
 import makePoint from './MapHelperFunctions/MakePoint.js'
 import makeLine from './MapHelperFunctions/MakeLine.js'
 import makeFetchRequest from '../HelperFunctions/MakeFetchRequest.js'
@@ -85,7 +85,7 @@ class LiveCoachMap extends Component {
 
   listAnnotations = async (sessionId) => {
     const endpoint = "https://lca.devlabs-projects.info/annotations/?session=" + sessionId;
-    const response = await makeFetchRequest(endpoint, "GET");
+    const response = await makeFetchRequest(endpoint, "GET", '');
     return response;
   }
 
@@ -105,17 +105,16 @@ class LiveCoachMap extends Component {
 
 
   createAnnotation = async (id) => {
-    await fetch("https://lca.devlabs-projects.info/annotations", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+
+    await makeFetchRequest(
+      "https://lca.devlabs-projects.info/annotations",
+      "POST",
+      {
         "text": 'current',
         "session": id,
         "drawings": 'hello',
-      }),
-    })
+      },
+    )
     await this.updateAnnotationList(id)
   }
 
@@ -127,18 +126,17 @@ class LiveCoachMap extends Component {
         "circle": this.state.circlePoints,
         "arrow": this.state.arrowpoints,
     }
+
     const endpoint = "https://lca.devlabs-projects.info/annotations/" + this.state.currentAnnotationId
-    await fetch(endpoint, {
-      method: "PUT",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    await makeFetchRequest(
+      endpoint,
+      "PUT",
+      {
         "text": text,
         "session": this.state.id,
         "drawings": drawing,
-      }),
-    })
+      }
+    );
     console.log("annotation updated!");
     this.updateAnnotationList(this.state.id);
   }
@@ -160,7 +158,7 @@ class LiveCoachMap extends Component {
     const annotationKey = e.currentTarget.children[0].className
     const selectedAnnotation = this.state.annotations[annotationKey]._id;
     const endpoint = 'https://lca.devlabs-projects.info/annotations/' + selectedAnnotation;
-    const response = await makeFetchRequest(endpoint, 'DELETE')
+    const response = await makeFetchRequest(endpoint, 'DELETE', '')
     this.updateAnnotationList(this.state.id)
   }
 
@@ -305,10 +303,10 @@ class LiveCoachMap extends Component {
 
     return (
       <Container fluid className="mapContainer">
-        <NoteView
-          noteTab={this.state.noteTab}
-          noteClick={this.noteClick}
-          noteSubmit={this.submitAnnotation}
+        <AnnotationView
+          annotationTab={this.state.annotationTab}
+          annotationClick={this.annotationClick}
+          annotationSubmit={this.submitAnnotation}
           annotationList={this.state.annotations}
           deleteAnnotation={this.deleteAnnotation}
         />
