@@ -145,16 +145,35 @@
   border: 1px solid black;
   padding-left: 10px;
   padding-right: 10px;
-  height: 4vh;
+  height: 5vh;
+  width: 100%;
+  text-align: left;
+  background-color: #D8D8D8;
 }
+.selectedAnnotation {
+  border: 1px solid black;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 5vh;
+  width: 100%;
+  text-align: left;
+  background-color: white;
+}
+
+
+
+
 .annotationText {
   white-space: nowrap;
   overflow: hidden;
 }
 
+
+
 .annotationDeleteButton {
   position: fixed;
   right: 4vw;
+  margin-top: -0.3%;
 }
 .trashImg {
   width: 25px;

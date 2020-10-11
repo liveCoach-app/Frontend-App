@@ -4,6 +4,7 @@
 
 export default async function makeFetchRequest(endpoint, fetchMethod, fetchBody) {
   let response = ''
+
   if(fetchBody !== '') {
     response = await fetch(
       endpoint, {

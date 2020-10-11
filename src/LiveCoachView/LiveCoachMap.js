@@ -59,6 +59,8 @@ class LiveCoachMap extends Component {
     id: "",
     annotations: [],
     currentAnnotationId: '',
+    currentAnnotationNumber: 0,
+    text: '',
   };
 
 
@@ -67,24 +69,27 @@ class LiveCoachMap extends Component {
   }
 
 
-  updateAnnotationList = async (sessionId) => {
-    const annotateRequest = await this.listAnnotations(sessionId);
-    this.setState({
-      annotations: annotateRequest.data,
+  updateText = async (evt) => {
+    const currentText = evt.currentTarget.children[1].value;
+    await this.setState({
+      text: currentText,
     })
-
-    if(this.state.annotations.length !== 0) {
-      const currentId = this.state.annotations[this.state.annotations.length - 1]._id
-      this.setState({
-        currentAnnotationId: currentId
-      })
-    }
-
   }
 
 
-  listAnnotations = async (sessionId) => {
-    const endpoint = "https://lca.devlabs-projects.info/annotations/?session=" + sessionId;
+  updateAnnotationList = async () => {
+    const annotateRequest = await this.listAnnotations();
+    await this.setState({
+      annotations: annotateRequest.data,
+    })
+    if(this.state.annotations.length === 0) {
+      await this.createAnnotation()
+    }
+  }
+
+
+  listAnnotations = async () => {
+    const endpoint = "https://lca.devlabs-projects.info/annotations/?session=" + this.state.id;
     const response = await makeFetchRequest(endpoint, "GET", '');
     return response;
   }
@@ -94,51 +99,80 @@ class LiveCoachMap extends Component {
   setUpAnnotations = async () => {
     const { history } = this.props;
     const pathname = history.location.search.substring(1);
-    this.setState({
+    await this.setState({
       id: pathname
     })
-    await this.updateAnnotationList(pathname)
-    if(this.state.annotations.length === 0) {
-      await this.createAnnotation(pathname)
-    }
+
+    await this.updateAnnotationList()
+    this.setState({
+      currentAnnotationId: this.state.annotations[this.state.annotations.length - 1]._id
+    })
   }
 
 
-  createAnnotation = async (id) => {
+  selectAnnotation = async (evt) => {
+    this.updateAnnotation()
+    const annotationNumber = evt.currentTarget.children[0].className;
+    const currentAnnotation = this.state.annotations[annotationNumber];
+    console.log(currentAnnotation)
+    await this.setState({
+      currentAnnotationId: currentAnnotation._id,
+      text: currentAnnotation.text,
+      lines: currentAnnotation.drawings.brush,
+      arrowPoints: currentAnnotation.drawings.arrow,
+      circlePoints: currentAnnotation.drawings.circle,
+      currentAnnotationNumber: annotationNumber,
+    })
+  }
 
-    await makeFetchRequest(
+
+  createAnnotation = async () => {
+    const response = await makeFetchRequest(
       "https://lca.devlabs-projects.info/annotations",
       "POST",
       {
-        "text": 'current',
-        "session": id,
+        "text": 'New Annotation',
+        "session": this.state.id,
         "drawings": 'hello',
       },
     )
-    await this.updateAnnotationList(id)
+
+    await this.updateAnnotationList()
+    await this.setState({
+      currentAnnotationId: this.state.annotations[this.state.annotations.length - 1]._id,
+      lines: [],
+      arrowPoints: [],
+      circlePoints: [],
+      text: '',
+    })
+
   }
 
-
-
-  updateAnnotation = async (text) => {
+  updateAnnotation = async () => {
     const drawing = {
         "brush": this.state.lines,
         "circle": this.state.circlePoints,
-        "arrow": this.state.arrowpoints,
+        "arrow": this.state.arrowPoints,
     }
 
     const endpoint = "https://lca.devlabs-projects.info/annotations/" + this.state.currentAnnotationId
+
+    if(this.state.text === "") {
+      await this.setState({
+        text: "Unnamed"
+      })
+    }
     await makeFetchRequest(
       endpoint,
       "PUT",
       {
-        "text": text,
+        "text": this.state.text,
         "session": this.state.id,
         "drawings": drawing,
       }
     );
     console.log("annotation updated!");
-    this.updateAnnotationList(this.state.id);
+    await this.updateAnnotationList();
   }
 
 
@@ -146,14 +180,13 @@ class LiveCoachMap extends Component {
   submitAnnotation = async (evt) => {
     evt.preventDefault()
     const text = evt.currentTarget.children[1].value;
-    await this.updateAnnotation(text);
-    await this.createAnnotation(this.state.id);
+    await this.updateAnnotation();
+    await this.createAnnotation();
     console.log('annotation created');
   }
 
 
   deleteAnnotation = async (e) => {
-
     // DELETE THE ANNOTATION
     const annotationKey = e.currentTarget.children[0].className
     const selectedAnnotation = this.state.annotations[annotationKey]._id;
@@ -309,6 +342,10 @@ class LiveCoachMap extends Component {
           annotationSubmit={this.submitAnnotation}
           annotationList={this.state.annotations}
           deleteAnnotation={this.deleteAnnotation}
+          annotationSelect={this.selectAnnotation}
+          updateText={this.updateText}
+          text={this.state.text}
+          currentAnnotationNumber={this.state.currentAnnotationNumber}
         />
         <Map
           currentTool={this.state.currentTool} onClick={this.onClick}

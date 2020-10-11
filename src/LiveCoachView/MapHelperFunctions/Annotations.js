@@ -4,9 +4,11 @@ import React from 'react'
 
 export default function Annotations(props) {
   const annotations = props.annotations;
+  const selectAnnotation = props.selectAnnotation;
+  const currentAnnotationNumber = props.currentAnnotationNumber;
 
-  const renderButton = (arr, i) => {
-    if(i !== arr.length - 1) {
+  const renderButton = (i) => {
+    if(parseInt(currentAnnotationNumber) !== i) {
       return (
         <button className="annotationDeleteButton" onClick={props.deleteAnnotation}>
           <div className={i} />
@@ -22,6 +24,15 @@ export default function Annotations(props) {
     }
   }
 
+  const isClassSelected = (i) => {
+    if(parseInt(currentAnnotationNumber) === i) {
+      return ("selectedAnnotation")
+    }
+    else {
+      return("annotation")
+    }
+  }
+
   if(annotations === void(0)) {
     return (<div>none detected</div>)
   }
@@ -30,11 +41,14 @@ export default function Annotations(props) {
       annotations.map(
         (annotation, i)=> {
           return (
-            <li key={i} className="annotation">
-              <div className="annotationText">
-                {annotation.text}
-                {renderButton(annotations, i)}
-              </div>
+            <li key={i}>
+              <button className={isClassSelected(i)} onClick={selectAnnotation}>
+                <div className={i}></div>
+                <div className="annotationText">
+                  {annotation.text}
+                  {renderButton(i)}
+                </div>
+              </button>
             </li>
           )
         }
