@@ -2,7 +2,12 @@
 
 
 
-export default async function makeFetchRequest(endpoint, fetchMethod, fetchBody) {
+export default async function makeFetchRequest(path, fetchMethod, fetchBody) {
+
+  const base = "https://lca.devlabs-projects.info/"
+  const endpoint = base.concat(path);
+
+
   let response = ''
 
   if(fetchBody !== '') {

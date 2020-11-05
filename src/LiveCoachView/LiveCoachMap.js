@@ -89,7 +89,7 @@ class LiveCoachMap extends Component {
 
 
   listAnnotations = async () => {
-    const endpoint = "https://lca.devlabs-projects.info/annotations/?session=" + this.state.id;
+    const endpoint = "annotations/?session=" + this.state.id;
     const response = await makeFetchRequest(endpoint, "GET", '');
     return response;
   }
@@ -128,18 +128,23 @@ class LiveCoachMap extends Component {
 
   createAnnotation = async () => {
     const response = await makeFetchRequest(
-      "https://lca.devlabs-projects.info/annotations",
+      "annotations",
       "POST",
       {
         "text": 'New Annotation',
         "session": this.state.id,
-        "drawings": 'hello',
+        "drawings": {
+          "brush": [],
+          "circle": [],
+          "arrow": [],
+        },
       },
     )
 
     await this.updateAnnotationList()
     await this.setState({
       currentAnnotationId: this.state.annotations[this.state.annotations.length - 1]._id,
+      currentAnnotationNumber: this.state.annotations.length - 1,
       lines: [],
       arrowPoints: [],
       circlePoints: [],
@@ -155,7 +160,7 @@ class LiveCoachMap extends Component {
         "arrow": this.state.arrowPoints,
     }
 
-    const endpoint = "https://lca.devlabs-projects.info/annotations/" + this.state.currentAnnotationId
+    const endpoint = "annotations/" + this.state.currentAnnotationId
 
     if(this.state.text === "") {
       await this.setState({
@@ -190,7 +195,7 @@ class LiveCoachMap extends Component {
     // DELETE THE ANNOTATION
     const annotationKey = e.currentTarget.children[0].className
     const selectedAnnotation = this.state.annotations[annotationKey]._id;
-    const endpoint = 'https://lca.devlabs-projects.info/annotations/' + selectedAnnotation;
+    const endpoint = 'annotations/' + selectedAnnotation;
     const response = await makeFetchRequest(endpoint, 'DELETE', '')
     this.updateAnnotationList(this.state.id)
   }
