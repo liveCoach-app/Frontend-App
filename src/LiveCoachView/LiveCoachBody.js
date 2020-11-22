@@ -8,7 +8,7 @@ import Stats from './LiveCoachStats'
 import Map from './LiveCoachMap'
 
 
-export default function LiveCoachBody() {
+export default function LiveCoachBody(props) {
   return (
     <Row>
       <Col xs={6} className="statsSide"><Stats /></Col>

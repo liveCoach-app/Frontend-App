@@ -90,7 +90,7 @@
 
     /** Note Tab Styles **/
 
-.noteButton {
+.annotationButton {
   margin: 0px;
   margin-left: 75%;
   font-size: 2vh;
@@ -99,11 +99,11 @@
   background-color: white;
 }
 
-.activeNoteButton {
+.activeAnnotationButton {
   background-color: #D8D8D8;
 }
 
-.noteBox {
+.annotationBox {
   position: absolute;
   background-color: #D8D8D8;
   border: 2px solid black;
@@ -115,17 +115,69 @@
   z-index: 1;
 }
 
-.noteContent {
+.annotationContent {
   width: 90%;
   height: 70%;
   background-color: #E1E1E1;
   resize: none;
 }
 
-.noteTime {
+.annotationTime {
   font-size: 1.5vw;
   margin-top: 7px;
   margin-left: 5%;
+}
+
+.annotationList {
+  position: absolute;
+  width: 30vw;
+  background-color: #D8D8D8;
+  z-index: 1;
+  left: 36%;
+  top: 45vh;
+  border: 2px solid black;
+  list-style: none;
+  padding: 0px;
+  text-align: left;
+}
+
+.annotation {
+  border: 1px solid black;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 5vh;
+  width: 100%;
+  text-align: left;
+  background-color: #D8D8D8;
+}
+.selectedAnnotation {
+  border: 1px solid black;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 5vh;
+  width: 100%;
+  text-align: left;
+  background-color: white;
+}
+
+
+
+
+.annotationText {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+
+
+.annotationDeleteButton {
+  position: fixed;
+  right: 4vw;
+  margin-top: -0.3%;
+}
+.trashImg {
+  width: 25px;
+  height: 25px;
 }
 
     /** Map Styles **/
@@ -139,7 +191,7 @@
   margin-left: 0px;
 }
 
-.noteRow {
+.annotationRow {
   text-align: right;
 }
 
@@ -162,29 +214,4 @@
 
 .activeTool {
   background-color: #D8D8D8;
-}
-
-
-
-
-
-/** Stat Styles **/
-
-
-.championList {
-  background-color: red;
-  width: 48.5vw;
-  height: 84vh;
-  overflow-y: scroll;
-  list-style: none;
-  padding: 5px;
-  padding-right: 5px;
-}
-
-.listItem {
-  background-color: green;
-}
-
-.champCol {
-
 }

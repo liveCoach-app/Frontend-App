@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import StudentStart from './StudentStartSession/StartSession.js';
 import LiveCoachView from './LiveCoachView/CoachLive.js';
 import StartScreen from './StartSession/StartScreen.js'
+import makeFetchRequest from './HelperFunctions/MakeFetchRequest.js'
 
 import {
   BrowserRouter as Router,
@@ -18,27 +19,50 @@ import {
 
 
 
-export default function App() {
-  return (
-    <Router>
-      <div>
-        <Switch>
-          <Route path="/StartScreen">
-            <StartScreen />
-          </Route>
-          <Route path="/StudentStart">
-            <StudentStart />
-          </Route>
-          <Route path="/CoachLive">
-            <LiveCoachView />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
-  );
+export default class App extends React.Component {
+
+
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      id: "",
+    };
+  }
+
+
+  createSession = async () => {
+    const response = await makeFetchRequest("https://lca.devlabs-projects.info/sessions", "POST", '');
+    this.setState({
+      id: response.data.id,
+    });
+    return response.data.id;
+  };
+
+
+  render() {
+    return (
+      <Router>
+        <div>
+          <Switch>
+            <Route path="/StartScreen">
+              <StartScreen createSession={this.createSession}/>
+            </Route>
+            <Route path="/StudentStart">
+              <StudentStart />
+            </Route>
+            <Route path="/CoachLive" >
+              <LiveCoachView annotate={this.createAnnotation}/>
+            </Route>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
+        </div>
+      </Router>
+    );
+  }
+
 }
 
 function Home() {

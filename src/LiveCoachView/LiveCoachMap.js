@@ -1,36 +1,23 @@
 import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
 import './CoachLive.css';
 
 
-import { Stage, Layer, Line } from 'react-konva';
+import { withRouter } from "react-router-dom";
 
 
-import NoteView from './MapHelperFunctions/NoteView.js'
-import MapSideBar from './MapHelperFunctions/MapSideBar.js'
-import MapImg from './MapHelperFunctions/MapImg.js'
-import renderArrows from './MapHelperFunctions/RenderArrows.js'
-import renderCircles from './MapHelperFunctions/RenderCircles.js'
+
+import Map from './MapHelperFunctions/Map.js'
+import AnnotationView from './MapHelperFunctions/AnnotationView.js'
 import makePoint from './MapHelperFunctions/MakePoint.js'
 import makeLine from './MapHelperFunctions/MakeLine.js'
+import makeFetchRequest from '../HelperFunctions/MakeFetchRequest.js'
 import deletePoint from './MapHelperFunctions/DeletePoint.js'
 
 
 
-export default function LiveCoachMap() {
-  return (
-    <Container fluid className="mapContainer">
-      <NoteView />
-      <Row id="mapRow">
-        <Map />
-      </Row>
-    </Container>
-  );
-}
-
-class Map extends Component {
+class LiveCoachMap extends Component {
 
   state = {
     lines: [],
@@ -66,15 +53,164 @@ class Map extends Component {
     arrowPoints: [],
     // Arrow points is stuctured the exact same way as the circle points.
     currentTool: 'brush',
+
+    //Note view state
+
+    id: "",
+    annotations: [],
+    currentAnnotationId: '',
+    currentAnnotationNumber: 0,
+    text: '',
   };
+
+
+  componentDidMount(evt) {
+    this.setUpAnnotations()
+  }
+
+
+  updateText = async (evt) => {
+    const currentText = evt.currentTarget.children[1].value;
+    await this.setState({
+      text: currentText,
+    })
+  }
+
+
+  updateAnnotationList = async () => {
+    const annotateRequest = await this.listAnnotations();
+    await this.setState({
+      annotations: annotateRequest.data,
+    })
+    if(this.state.annotations.length === 0) {
+      await this.createAnnotation()
+    }
+  }
+
+
+  listAnnotations = async () => {
+    const endpoint = "annotations/?session=" + this.state.id;
+    const response = await makeFetchRequest(endpoint, "GET", '');
+    return response;
+  }
+
+
+
+  setUpAnnotations = async () => {
+    const { history } = this.props;
+    const pathname = history.location.search.substring(1);
+    await this.setState({
+      id: pathname
+    })
+
+    await this.updateAnnotationList()
+    this.setState({
+      currentAnnotationId: this.state.annotations[this.state.annotations.length - 1]._id
+    })
+  }
+
+
+  selectAnnotation = async (evt) => {
+    this.updateAnnotation()
+    const annotationNumber = evt.currentTarget.children[0].className;
+    const currentAnnotation = this.state.annotations[annotationNumber];
+    console.log(currentAnnotation)
+    await this.setState({
+      currentAnnotationId: currentAnnotation._id,
+      text: currentAnnotation.text,
+      lines: currentAnnotation.drawings.brush,
+      arrowPoints: currentAnnotation.drawings.arrow,
+      circlePoints: currentAnnotation.drawings.circle,
+      currentAnnotationNumber: annotationNumber,
+    })
+  }
+
+
+  createAnnotation = async () => {
+    const response = await makeFetchRequest(
+      "annotations",
+      "POST",
+      {
+        "text": 'New Annotation',
+        "session": this.state.id,
+        "drawings": {
+          "brush": [],
+          "circle": [],
+          "arrow": [],
+        },
+      },
+    )
+
+    await this.updateAnnotationList()
+    await this.setState({
+      currentAnnotationId: this.state.annotations[this.state.annotations.length - 1]._id,
+      currentAnnotationNumber: this.state.annotations.length - 1,
+      lines: [],
+      arrowPoints: [],
+      circlePoints: [],
+      text: '',
+    })
+
+  }
+
+  updateAnnotation = async () => {
+    const drawing = {
+        "brush": this.state.lines,
+        "circle": this.state.circlePoints,
+        "arrow": this.state.arrowPoints,
+    }
+
+    const endpoint = "annotations/" + this.state.currentAnnotationId
+
+    if(this.state.text === "") {
+      await this.setState({
+        text: "Unnamed"
+      })
+    }
+    await makeFetchRequest(
+      endpoint,
+      "PUT",
+      {
+        "text": this.state.text,
+        "session": this.state.id,
+        "drawings": drawing,
+      }
+    );
+    console.log("annotation updated!");
+    await this.updateAnnotationList();
+  }
+
+
+
+  submitAnnotation = async (evt) => {
+    evt.preventDefault()
+    const text = evt.currentTarget.children[1].value;
+    await this.updateAnnotation();
+    await this.createAnnotation();
+    console.log('annotation created');
+  }
+
+
+  deleteAnnotation = async (e) => {
+    // DELETE THE ANNOTATION
+    const annotationKey = e.currentTarget.children[0].className
+    const selectedAnnotation = this.state.annotations[annotationKey]._id;
+    const endpoint = 'annotations/' + selectedAnnotation;
+    const response = await makeFetchRequest(endpoint, 'DELETE', '')
+    this.updateAnnotationList(this.state.id)
+  }
+
+
+
+
+
+
 
 
   /*
     This function is called inside the mouse move function and it returns an array in which the endpoint of the last line in either circlepoints or arrowpoints is set to the cursors current position
   */
-  changeEndpoint = (elementArray) => {
-    const stage = this.stageRef.getStage();
-    const point = stage.getPointerPosition();
+  changeEndpoint = (elementArray, point) => {
     //make a copy in order to avoid direct mutation of state
     const tempArray = elementArray.slice(0);
     //select the last line and change the endpoint x and y values
@@ -83,10 +219,12 @@ class Map extends Component {
     return tempArray;
   };
 
-  handleMouseDown = () => {
+  handleMouseDown = (evt) => {
+    this._drawing = true
 
-    this._drawing = true;
 
+    const stage = evt.currentTarget;
+    const point = stage.getPointerPosition();
     if(this.state.currentTool === 'brush'){
       this.setState({
         lines: [...this.state.lines, []]
@@ -94,7 +232,6 @@ class Map extends Component {
     }
     else if(this.state.currentTool === 'eraser') {
       //get mouse pointer position
-      const stage = this.stageRef.getStage();
       const shapeType = stage.targetShape.getAttrs().type;
       const shapeId = stage.targetShape.id();
 
@@ -120,16 +257,14 @@ class Map extends Component {
     }
     else if (this.state.currentTool === 'circle') {
       //create new line entry in circlePoints
-      const stage = this.stageRef.getStage();
-      const point = stage.getPointerPosition();
+
       this.setState({
         circlePoints: [...this.state.circlePoints, makeLine(makePoint(point.x, point.y), makePoint(point.x, point.y))]
       });
     }
     else if (this.state.currentTool === 'arrow') {
       //create new line entry in arrowPoints
-      const stage = this.stageRef.getStage();
-      const point = stage.getPointerPosition();
+
 
       this.setState({
         arrowPoints: [...this.state.arrowPoints, makeLine( makePoint(point.x, point.y),  makePoint(point.x, point.y) )]
@@ -145,9 +280,11 @@ class Map extends Component {
       return;
     }
 
+    const stage = e.currentTarget;
+    const point = stage.getPointerPosition();
+
     if(this.state.currentTool === 'brush') {
-      const stage = this.stageRef.getStage();
-      const point = stage.getPointerPosition();
+
       const { lines } = this.state;
 
       let lastLine = lines[lines.length - 1];
@@ -161,27 +298,25 @@ class Map extends Component {
       });
     }
     else if (this.state.currentTool === 'circle') {
-      const tempElement = this.changeEndpoint(this.state.circlePoints)
+      const tempElement = this.changeEndpoint(this.state.circlePoints, point)
       this.setState({
         circlePoints: tempElement
       })
     }
     else if (this.state.currentTool === 'arrow') {
-      const tempElement = this.changeEndpoint(this.state.arrowPoints);
+      const tempElement = this.changeEndpoint(this.state.arrowPoints, point);
       this.setState({
         arrowPoints: tempElement
       })
     }
   };
 
-
   handleMouseUp = () => {
     this._drawing = false;
+    this.updateAnnotation('current');
   };
 
 
-
-  //sets currentTool to the id value of the clicked button
   onClick = (evt) => {
     const target = evt.currentTarget
     this.setState({
@@ -198,49 +333,39 @@ class Map extends Component {
   }
 
 
+  //sets currentTool to the id value of the clicked button
+
 
   render() {
-    const stageWidth = window.innerWidth / 2.4;
-    const stageHeight = window.innerWidth / 2.4;
+
 
     return (
-      <div className="MapDiv">
-        <MapSideBar
-          handleClick={this.onClick}
-          clearClick={this.clearClick}
-          currentTool={this.state.currentTool}
+      <Container fluid className="mapContainer">
+        <AnnotationView
+          annotationTab={this.state.annotationTab}
+          annotationClick={this.annotationClick}
+          annotationSubmit={this.submitAnnotation}
+          annotationList={this.state.annotations}
+          deleteAnnotation={this.deleteAnnotation}
+          annotationSelect={this.selectAnnotation}
+          updateText={this.updateText}
+          text={this.state.text}
+          currentAnnotationNumber={this.state.currentAnnotationNumber}
         />
-        <Stage
-          container={'#mapRow'}
-          width={stageWidth}
-          height={stageHeight}
-          onContentMousedown={this.handleMouseDown}
-          onContentMousemove={this.handleMouseMove}
-          onContentMouseup={this.handleMouseUp}
-          ref={node => {
-            this.stageRef = node;
-          }}
-        >
-          <Layer>
-            <MapImg />
-          </Layer>
-          <Layer>
-            {
-              renderCircles(this.state.circlePoints)
-            }
-          </Layer>
-          <Layer>
-            {
-              renderArrows(this.state.arrowPoints)
-            }
-          </Layer>
-          <Layer>
-            {
-              this.state.lines.map((line, i) => (<Line key={i} id={i} type="line" points={line} stroke="red" fill={'red'}/>))
-            }
-          </Layer>
-        </Stage>
-      </div>
+        <Map
+          currentTool={this.state.currentTool} onClick={this.onClick}
+          clearClick={this.clearClick}
+          circlePoints={this.state.circlePoints}
+          arrowPoints={this.state.arrowPoints}
+          lines={this.state.lines}
+          handleMouseDown={this.handleMouseDown}
+          handleMouseMove={this.handleMouseMove}
+          handleMouseUp={this.handleMouseUp}
+        />
+      </Container>
     );
   }
 }
+
+
+export default withRouter(LiveCoachMap);
