@@ -5,11 +5,21 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import makeFetchRequest from '../../HelperFunctions/MakeFetchRequest.js'
+
 
 
 export default function TabScreen() {
 
+  const getSummonerId = async (summonerName) => {
+    const request = await makeFetchRequest("lol/summoner/v4/summoners/by-name/Dekempsy4", "GET", '')
+    console.log(request.data.accountId)
+
+  }
+
   const renderBlueChamps = () => {
+    getSummonerId()
+
     return Data.map((champion,i) => {
       if(champion.team === 'blue') {
         return (
