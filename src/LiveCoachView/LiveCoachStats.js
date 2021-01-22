@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 
 import TabScreen from './TabBar/TabScreen.js'
-
+import StatScreen from './StatBar/StatScreen.js'
 
 
 export default function Stats() {
@@ -44,7 +44,7 @@ function MainStats(props) {
 
   const mainBody = () => {
     if(tabscreen === 'statistic') {
-      return (<div className="statisticBody">STAT SCREEN</div>);
+      return (<StatScreen />);
     }
     else if(tabscreen === 'liveData') {
       return (<TabScreen />)
